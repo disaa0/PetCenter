@@ -6,8 +6,9 @@ import os
 
 app = Flask(__name__)
 app.secret_key='979cca07654f433e81e83fbf0cbc9b15'
+users_file = 'db/users.csv';
 
-user_dict = usuarios.lee_diccionario_usuarios('db/users.csv')
+user_dict = usuarios.lee_diccionario_usuarios(users_file)
 mails = usuarios.crear_lista_emails(user_dict)
 
 @app.context_processor
@@ -19,11 +20,13 @@ def index():
     return render_template("index.html")
 
 
-
 @app.route("/login", methods=['GET','POST'])
 def login():
     if request.method == 'GET':
-        return render_template("login.html")
+        if 'logged_in' in session:
+            return redirect('/')
+        else:
+            return render_template("login.html")
     else:
         if request.method == 'POST':
             username = request.form['username']
@@ -39,10 +42,15 @@ def login():
                     return redirect("/")
                 else:
                     msg = f'La contraseña es incorrecta para el usuario {username}'
-                    return render_template("login.html",mensaje=msg, alerta=True)
+                    return render_template("login.html",mensaje=msg)
             else:
                 msg = f'Usuario no encontrado.'
                 return render_template("login.html",mensaje=msg)
+
+@app.route("/logout", methods=['GET'])
+def logout():
+    session.clear()
+    return redirect("/")
 
 @app.route("/signup", methods=['GET','POST'])
 def signup():
@@ -56,23 +64,28 @@ def signup():
             email = request.form['email']
             type = 'cliente'
 
-            if username not in user_dict:
-                if email not in emails:
+            mensajes = []
+
+            if username not in user_dict and email not in mails:
+                if email not in mails:
                         password_hashed = sha256_crypt.encrypt(password)
-                        session['username'] = username
-                        session['name']   = user_dict[username]['name']
-                        session['logged_in']= True
-                        session['type'] = user_dict[username]['type']
-                        return redirect("/")
-                else:
-                    msg = f'La contraseña es incorrecta para el usuario {username}'
-                    return render_template("login.html",mensaje=msg, alerta=True)
+                        user_dict[username] = {
+                            'username' : username,
+                            'name' : name,
+                            'type' : type,
+                            'email' : email,
+                            'password' : password_hashed
+                        }
+                        usuarios.update_users_file(user_dict,users_file)
+                        return redirect("/login")
             else:
-                msg = f'Email ya registrado.'
-                return render_template("signup.html",mensaje=msg)
-        else:
-            msg = f'Usuario ya existe.'
-            return render_template("signup.html",mensaje=msg)
+                if email in mails:
+                    msg = f'Email ya registrado.'
+                    mensajes.append(msg)
+                if username in user_dict:
+                    msg = f'Usuario ya existe.'
+                    mensajes.append(msg)
+                return render_template("signup.html",mensajes=mensajes)
 if __name__ == "__main__":
     app.run(debug=True)
     

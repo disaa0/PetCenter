@@ -32,6 +32,3 @@ def obtiene_llaves(diccionario:dict,llave_dicc:str)->list:
     lista.extend(lista_dentro)
     print(lista)
     return lista
-
-my_dict = usuarios.lee_diccionario_usuarios('db/users.csv')
-graba_diccionario(my_dict,'username','db/users.csv')

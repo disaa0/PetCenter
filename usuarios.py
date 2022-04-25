@@ -1,5 +1,10 @@
 import csv
 
+from otros import graba_diccionario
+
+def update_users_file(dic:dict, file:str):
+    graba_diccionario(dic, 'username', file)
+
 def lee_diccionario_usuarios(archivo:str)->dict:
     diccionario = {}
     try:
@@ -17,4 +22,3 @@ def crear_lista_emails(usuarios:dict)->list:
     for usuario in usuarios:
         lista.append(usuarios[usuario]['email'])
     return lista
-
