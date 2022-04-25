@@ -1,0 +1,51 @@
+{%  extends "base.html"  %}
+{% block title %}Sign in
+{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block body %}
+
+
+<div class="container-sm">
+    <h2>Iniciar sesión</h2>
+    <h5>Introduzca su usuario y contraseña</h5>
+
+    {% if mensaje|length %}
+    <div class="container-fluid py-1">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+            <div>
+                {{mensaje}}
+            </div>
+          </div>
+    </div>
+    {% endif %}
+
+    <form action="" method="POST">
+        <div class="mb-3">
+            <label for="inputUser" class="form-label">Usuario</label>
+            <input type="text" class="form-control" id="username" name="username">
+        </div>
+        <div class="mb-3">
+            <label for="inputPassword" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password" name="password">
+        </div>
+        <div>
+            <a href="/password_recovery">Olvide mi contraseña</a>
+            <p>¿No tienes cuenta? <a href="/signup">Regístrate</a></p>
+        </div>
+        <button type="submit" class="btn btn-primary" name="enviar" value="Enviar">Enviar</button>
+    </form>
+
+    
+
+    
+    
+</div>
+
+
+
+
+
+{% endblock %}
