@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+{% block title %}Agendar cita
+{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block body %}
+
+<div class="container-sm">
+
+    <h2>Agendar una cita</h2>
+    <h5>Para su mascota</h5>
+
+    <form class="row g-3" action="" method="POST">
+        <div class="col-md-4">
+            <label for="pet_name" class="form-label">Seleccione una mascota:</label>
+            <input type="text" class="form-control" id="name" name="name" required>
+            <div class="dropdown">
+                <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenu"
+                    data-bs-toggle="dropdown" aria-expanded="false">
+                    Seleccione
+                </button>
+                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
+                    <li><button class="dropdown-item" type="button">Action</button></li>
+                    <li><button class="dropdown-item" type="button">Another action</button></li>
+                    <li><button class="dropdown-item" type="button">Something else here</button></li>
+                </ul>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <label for="email" class="form-label">Email</label>
+            <input type="email" class="form-control" id="email" name="email" required>
+        </div>
+        <div class="col-md-4">
+            <label for="username" class="form-label">Usuario</label>
+            <div class="input-group">
+                <span class="input-group-text" id="inputGroupPrepend2">@</span>
+                <input type="text" class="form-control" id="username" name="username"
+                    aria-describedby="inputGroupPrepend2" required>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <label for="password" class="form-label">Contraseña</label>
+            <input type="password" class="form-control" id="password" name="password" required>
+        </div>
+        <div class="col-12">
+            <button class="btn btn-primary" type="submit">Crear cuenta</button>
+        </div>
+    </form>
+    {% for mensaje in mensajes %}
+    <div class="container-fluid py-1">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div>
+                {{mensaje}}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+{% endblock %}

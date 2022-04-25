@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}Agendar cita
+{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block body %}
+
+<div class="container-sm">
+    <form class="row g-3" action="" method="POST">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Tipo</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for mascota in mascotas %}
+                <tr>
+                    <th scope="row">1</th>
+                    <td>{{mascota['pet_name']}}</td>
+                    <td>{{mascota['type']}}</td>
+                    <td>
+                        <button type="submit" class="btn btn-link" name="submit_button" value={{mascota['pet_name']}}>Eliminar</button>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</div>
+
+
+
+{% endblock %}
