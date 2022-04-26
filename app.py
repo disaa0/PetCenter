@@ -1,4 +1,5 @@
-from crypt import methods
+#from crypt import methods
+from passlib.hash import sha256_crypt as sha256
 import pstats
 from flask import Flask, redirect, render_template, request, session, jsonify
 from passlib.hash import sha256_crypt
