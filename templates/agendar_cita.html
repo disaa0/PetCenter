@@ -12,39 +12,25 @@
     <h5>Para su mascota</h5>
 
     <form class="row g-3" action="" method="POST">
-        <div class="col-md-4">
-            <label for="pet_name" class="form-label">Seleccione una mascota:</label>
-            <input type="text" class="form-control" id="name" name="name" required>
-            <div class="dropdown">
-                <button class="btn btn-secondary btn-lg dropdown-toggle" type="button" id="dropdownMenu"
-                    data-bs-toggle="dropdown" aria-expanded="false">
-                    Seleccione
-                </button>
-                <ul class="dropdown-menu" aria-labelledby="dropdownMenu2">
-                    <li><button class="dropdown-item" type="button">Action</button></li>
-                    <li><button class="dropdown-item" type="button">Another action</button></li>
-                    <li><button class="dropdown-item" type="button">Something else here</button></li>
-                </ul>
-            </div>
+        <div class="col-md-12">
+            <label for="select_attention" class="form-label">Mascota</label>
+            <select class="form-select" aria-label="Select" id="select_pet" name="select_pet" required>
+                <option value="" selected>Seleccione</option>
+                {% for mascota in mascotas %}
+                <option value="{{ mascota }}">{{ mascota }}</option>
+                {% endfor %}
+            </select>
         </div>
-        <div class="col-md-4">
-            <label for="email" class="form-label">Email</label>
-            <input type="email" class="form-control" id="email" name="email" required>
-        </div>
-        <div class="col-md-4">
-            <label for="username" class="form-label">Usuario</label>
-            <div class="input-group">
-                <span class="input-group-text" id="inputGroupPrepend2">@</span>
-                <input type="text" class="form-control" id="username" name="username"
-                    aria-describedby="inputGroupPrepend2" required>
-            </div>
-        </div>
-        <div class="col-md-6">
-            <label for="password" class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="password" name="password" required>
+        <div class="col-md-12">
+            <label for="select_attention" class="form-label">Tipo de cita</label>
+            <select class="form-select" aria-label="Select" id="select_attention" name="select_attention" required>
+                <option value="" selected>Seleccione</option>
+                <option value="Boutique">Boutique</option>
+                <option value="Boutique">Veterinaria</option>
+            </select>
         </div>
         <div class="col-12">
-            <button class="btn btn-primary" type="submit">Crear cuenta</button>
+            <button class="btn btn-primary" type="submit">Agendar</button>
         </div>
     </form>
     {% for mensaje in mensajes %}

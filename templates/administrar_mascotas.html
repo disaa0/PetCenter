@@ -17,21 +17,92 @@
                 </tr>
             </thead>
             <tbody>
-                {% for mascota in mascotas %}
+                {% for mascota, datos in mascotas.items() %}
+                {% if datos["active"] == "True" %}
+                
                 <tr>
-                    <th scope="row">1</th>
-                    <td>{{mascota['pet_name']}}</td>
-                    <td>{{mascota['type']}}</td>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td> {{ datos["pet_name"] }} </td>
+                    <td> {{datos["type"]}} </td>
                     <td>
-                        <button type="submit" class="btn btn-link" name="submit_button" value={{mascota['pet_name']}}>Eliminar</button>
+                        <button type="submit" class="btn btn-link" name="submit_button_delete" value="{{ datos['pet_name' ]}}">Eliminar</button>
                     </td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>
     </form>
-</div>
 
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        Agregar mascota
+    </button>
 
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="" method="POST" id="pet_form">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Agregar mascota</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label for="pet_name" class="form-label">Nombre</label>
+                                <input type="text" class="form-control" id="pet_name" name="pet_name" required>
+                            </div>
+                            <div class="container-fluid">
+                                <label for="select_type" class="form-label">Tipo</label>
+                            </div>
+                            <div class="col-md-4">
+                                <select class="form-select" aria-label="Select" id="select_type" name="select_type" required>
+                                    <option value="" selected>Seleccione</option>
+                                    {% for tipo in tipos %}
+                                    <option value="{{ tipo }}">{{ tipo }}</option>
+                                    {% endfor %}
+                                    <option value="Otro">Otro</option>
+                                </select>
+                            </div>
+                            <div class="col-md-8">
+                                <input type="text" class="form-control" id="other_type" name="other_type" disabled>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="submit" class="btn btn-primary" name="submit_button_add">Crear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
-{% endblock %}
+    <!-- scripts -->
+    <script type="text/javascript">
+        var form = document.getElementById('pet_form')
+        var select = document.getElementById('select_type')
+        var input_text = document.getElementById('other_type')
+        constructor()
+
+        function constructor() {
+            form.reset()
+            input_text.setAttribute('disabled', true)
+            input_text.removeAttribute('required')
+        }
+
+        select.addEventListener("change", function () {
+            if (this.value == "Otro") {
+                input_text.removeAttribute('disabled')
+                input_text.setAttribute('required', true)
+            } else {
+                input_text.removeAttribute('required')
+                input_text.setAttribute('disabled', true)
+            }
+        });
+    </script>
+
+    {% endblock %}

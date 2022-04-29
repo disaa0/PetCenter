@@ -1,10 +1,13 @@
 import csv
 from queue import Empty
 
-from otros import graba_diccionario
+from otros import graba_diccionario, graba_diccionario_de_diccionarios
 
 def update_users_file(dic:dict, file:str):
     graba_diccionario(dic, 'username', file)
+
+def update_pets_file(dic:dict, file:str):
+    graba_diccionario_de_diccionarios(dic, file)
 
 def lee_diccionario_usuarios(archivo:str)->dict:
     diccionario = {}
@@ -40,4 +43,15 @@ def crear_lista_emails(usuarios:dict)->list:
     lista = []
     for usuario in usuarios:
         lista.append(usuarios[usuario]['email'])
+    return lista
+
+def crear_lista_mascotas(file:str)->list:
+    lista = []
+    try:
+        with open(file,"r",encoding="utf-8") as fh: #fh: file handle
+            csv_reader = csv.DictReader(fh)
+            for renglon in csv_reader:
+                lista.append(renglon['tipo'])
+    except IOError:
+        print(f"No se pudo abrir el archivo {file}")
     return lista
