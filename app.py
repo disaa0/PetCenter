@@ -2,7 +2,6 @@
 from passlib.hash import sha256_crypt as sha256
 import pstats
 from flask import Flask, redirect, render_template, request, session, jsonify
-from passlib.hash import sha256_crypt
 import login,usuarios
 import os
 
@@ -41,7 +40,7 @@ def login():
             password = request.form['password']
             if username in user_dict:
                 password_hashed = user_dict[username]['password']
-                contrasenia_correcta = sha256_crypt.verify(password,password_hashed)
+                contrasenia_correcta = sha256.verify(password,password_hashed)
                 if contrasenia_correcta == True:
                     session['username'] = username
                     session['name']   = user_dict[username]['name']
@@ -79,7 +78,7 @@ def signup():
 
             if username not in user_dict and email not in mails:
                 if email not in mails:
-                        password_hashed = sha256_crypt.encrypt(password)
+                        password_hashed = sha256.encrypt(password)
                         user_dict[username] = {
                             'username' : username,
                             'name' : name,
@@ -119,7 +118,7 @@ def agendar_cita():
 
             if username not in user_dict and email not in mails:
                 if email not in mails:
-                        password_hashed = sha256_crypt.encrypt(password)
+                        password_hashed = sha256.encrypt(password)
                         user_dict[username] = {
                             'username' : username,
                             'name' : name,
