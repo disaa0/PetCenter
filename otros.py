@@ -1,5 +1,5 @@
+from datetime import date, datetime
 import csv
-import usuarios
 
 def graba_diccionario(diccionario:dict,llave_dict:str,archivo:str):
     with open(archivo,'w') as fh:
@@ -67,3 +67,10 @@ def obtiene_llaves_dentro(diccionario:dict)->list:
     for elemento in diccionario[llave1][llave2]:
         llaves_finales.append(elemento)
     return llaves_finales
+
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    raise TypeError ("Type %s not serializable" % type(obj))

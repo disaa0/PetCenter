@@ -1,21 +1,27 @@
 #from crypt import methods
+from dataclasses import replace
 from passlib.hash import sha256_crypt as sha256
 import pstats
-from flask import Flask, redirect, render_template, request, session, jsonify
-import login,usuarios
+import login,usuarios,citas
 import os
+from datetime import datetime, timedelta
+from flask import Flask, redirect, render_template, request, session, jsonify
+from calendario import get_available_days_dict, create_event
+
 
 app = Flask(__name__)
 app.secret_key='979cca07654f433e81e83fbf0cbc9b15'
 users_file = 'db/users.csv'
 pets_file = 'db/pets.csv'
 pets_type_file = 'db/pet_types.csv'
+citas_file = 'db/citas.csv'
 
 
 user_dict = usuarios.lee_diccionario_usuarios(users_file)
 mails = usuarios.crear_lista_emails(user_dict)
 pet_dict = usuarios.lee_lista_mascotas(pets_file)
 common_types_list = usuarios.crear_lista_mascotas(pets_type_file)
+citas_dict = citas.lee_diccionario_citas(citas_file)
 
 
 @app.context_processor
@@ -99,43 +105,61 @@ def signup():
 
 @app.route("/agendar_cita", methods=['GET','POST'])
 def agendar_cita():
+    availible_days_dict = get_available_days_dict()
     if request.method == 'GET':
         if 'logged_in' in session:
             user = session['username']
-            print(pet_dict[user])
-            return render_template("agendar_cita.html", mascotas=pet_dict[user])
+            #print(pet_dict[user])
+            availible_days_dict = get_available_days_dict()
+            #print(availible_days_dict)
+            return render_template("agendar_cita.html", mascotas=pet_dict[user], days=availible_days_dict, is_fecha_defined=False)
         else:
             return redirect("/login")
     else:
+        user = session['username']
         if request.method == 'POST':
-            username = request.form['username']
-            password = request.form['password']
-            name = request.form['name']
-            email = request.form['email']
-            type = 'cliente'
-
             mensajes = []
-
-            if username not in user_dict and email not in mails:
-                if email not in mails:
-                        password_hashed = sha256.encrypt(password)
-                        user_dict[username] = {
-                            'username' : username,
-                            'name' : name,
-                            'type' : type,
-                            'email' : email,
-                            'password' : password_hashed
-                        }
-                        usuarios.update_users_file(user_dict,users_file)
-                        return redirect("/login")
+            print(request.form['button_used'])
+            if request.form['button_used'] == 'appointment':
+                fecha_texto = request.form['date_selected']
+                fecha = datetime.strptime(fecha_texto, '%d/%m/%Y')
+                fecha_formato = fecha.strftime('%Y-%m-%d')
+                horario = availible_days_dict[fecha_formato]
+                #print(horario[fecha_formato])
+                return render_template("agendar_cita.html", mascotas=pet_dict[user], days=availible_days_dict, is_fecha_defined=True, fecha=fecha_texto, horario=horario)
             else:
-                if email in mails:
-                    msg = f'Email ya registrado.'
-                    mensajes.append(msg)
-                if username in user_dict:
-                    msg = f'Usuario ya existe.'
-                    mensajes.append(msg)
-                return render_template("signup.html",mensajes=mensajes)
+                tiempo = request.form['hora']
+                ini = datetime.strptime(tiempo, '%Y-%m-%d %H:%M:%S')
+                inicio1 = ini.isoformat()
+                fin = ini + timedelta(hours=1)
+                final1 = fin.isoformat()
+                inicio = inicio1.replace('T',' ')
+                final = final1.replace('T',' ')
+
+                if user not in citas_dict:
+                    citas_dict[user] = {}
+                if inicio not in citas_dict[user]:
+                    citas_dict[user][inicio] = {}
+
+                citas_dict[user][inicio] = {
+                    'username':user,
+                    'pet_name':request.form['select_pet'],
+                    'appointment_type':request.form['select_attention'],
+                    'start':inicio,
+                    'end':final
+                }
+                pet_name = citas_dict[user][inicio]['pet_name']
+                pet_type = pet_dict[user][pet_name]['type']
+                client_name = user_dict[user]['name']
+                appointment_type = citas_dict[user][inicio]['appointment_type']
+                
+
+                title = 'Cita ' + appointment_type + ' - ' + user
+                text = 'Cliente: ' + client_name + '\n' + 'Mascota: ' + pet_name + '\n' + 'Tipo: ' + pet_type
+                create_event(title, text, inicio1, final1)
+                citas.update_citas_file(citas_dict, citas_file)            
+                return redirect('/')
+
 
 @app.route("/administrar_mascotas", methods=['GET','POST'])
 def administrar_mascotas():

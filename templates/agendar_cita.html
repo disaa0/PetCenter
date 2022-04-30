@@ -3,6 +3,8 @@
 {% endblock %}
 {% block head %}
 {{ super() }}
+<!-- Vanilla Datepicker CSS -->
+<link rel='stylesheet' href='https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.4/dist/css/datepicker.min.css'>
 {% endblock %}
 {% block body %}
 
@@ -11,27 +13,69 @@
     <h2>Agendar una cita</h2>
     <h5>Para su mascota</h5>
 
-    <form class="row g-3" action="" method="POST">
+    <form class="row g-3" action="" method="POST" id="form_cita" name="form_cita">
         <div class="col-md-12">
-            <label for="select_attention" class="form-label">Mascota</label>
-            <select class="form-select" aria-label="Select" id="select_pet" name="select_pet" required>
-                <option value="" selected>Seleccione</option>
-                {% for mascota in mascotas %}
-                <option value="{{ mascota }}">{{ mascota }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="col-md-12">
-            <label for="select_attention" class="form-label">Tipo de cita</label>
-            <select class="form-select" aria-label="Select" id="select_attention" name="select_attention" required>
-                <option value="" selected>Seleccione</option>
-                <option value="Boutique">Boutique</option>
-                <option value="Boutique">Veterinaria</option>
-            </select>
-        </div>
-        <div class="col-12">
-            <button class="btn btn-primary" type="submit">Agendar</button>
-        </div>
+            <label for="fecha" class="form-label">Fecha</label>
+            <div class="input-group mb-4">
+                <i class="bi bi-calendar-date input-group-text"></i>
+                {% if is_fecha_defined %}
+                <input type="text" class="datepicker_input form-control" placeholder="Seleccione un día" required
+                    aria-label="Agendar cita" id="fecha" name="fecha" value="{{fecha}}">
+                {% else %}
+                <input type=" text" class="datepicker_input form-control" placeholder="Seleccione un día" required
+                    aria-label="Agendar cita" id="fecha" name="fecha"">
+                {% endif %}
+            </div>
+            <button class=" btn btn-primary" type="button" name="submit_button" id="submit_button"
+                    value="solicitar_horario">Solicitar horario</button>
+            </div>
+            <div class="col-md-12">
+                <label for="hora" class="form-label">Hora</label>
+                {% if is_fecha_defined %}
+                <select class="form-select" aria-label="Select" id="hora" name="hora" required>
+                    <option value="" selected>Seleccione</option>
+                    {% for hora, dic in horario.items() %}
+                    {% if dic['disponible'] == True %}
+                    <option value="{{ dic['fecha'] }}"> {{hora}} </option>
+                    {% endif %}
+                    {% endfor %}
+                </select>
+                {% else %}
+                <select class="form-select" aria-label="Select" id="hora" name="hora" disabled>
+                    <option value="" selected>Seleccione</option>
+                </select>
+                {% endif %}
+            </div>
+            <div class="col-md-12">
+                <label for="select_attention" class="form-label">Mascota</label>
+                <select class="form-select" aria-label="Select" id="select_pet" name="select_pet"
+                    disabled="{{ not is_fecha_defined }}">
+                    <option value="" selected>Seleccione</option>
+                    {% for mascota in mascotas %}
+                    <option value="{{ mascota }}">{{ mascota }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+            <div class="col-md-12">
+                <label for="select_attention" class="form-label">Tipo de cita</label>
+                <select class="form-select" aria-label="Select" id="select_attention" name="select_attention"
+                    disabled="{{ not is_fecha_defined }}">
+                    <option value="" selected>Seleccione</option>
+                    <option value="Boutique">Boutique</option>
+                    <option value="Boutique">Veterinaria</option>
+                </select>
+            </div>
+            <div class="col-12">
+                <button class="btn btn-primary" type="submit" name="submit_button" id="submit_button"
+                    value="agendar">Agendar</button>
+            </div>
+            <input type="hidden" id="button_used" name="button_used" value="" required>
+            {% if is_fecha_defined %}
+            <input type="hidden" id="date_selected" name="date_selected" value="{{fecha}}" required>
+            {% else %}
+            <input type="hidden" id="date_selected" name="date_selected" value="" required>
+            {% endif %}
+            <input type="hidden" id="is_date_selected" name="is_date_selected" value="{{ is_fecha_defined }}">
     </form>
     {% for mensaje in mensajes %}
     <div class="container-fluid py-1">
@@ -46,5 +90,101 @@
     </div>
     {% endfor %}
 </div>
+
+<!-- Bootstrap 5 JavaScript Bundle with Popper -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.0/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-U1DAWAznBHeqEIlVSCgzq+c9gqGAJn5c/t99JyeKa9xxaYpSvHU5awsuZVVFIhvj"
+    crossorigin="anonymous"></script>
+
+<!-- Vanilla Datepicker JS -->
+<script src='https://cdn.jsdelivr.net/npm/vanillajs-datepicker@1.1.4/dist/js/datepicker-full.min.js'></script>
+
+<!-- scripts -->
+<script type="text/javascript">
+    var form = document.getElementById('form_cita');
+    var fecha_input = document.getElementById('fecha');
+    var hora_input = document.getElementById('hora');
+    var pet_input = document.getElementById('select_pet');
+    var attention_input = document.getElementById('select_attention');
+    var appointment_button = document.getElementById('submit_button');
+    var is_date_selected = document.getElementById('is_date_selected');
+    var date_selected = document.getElementById('date_selected');
+    var button_used = document.getElementById('button_used');
+    //alert(is_date_selected.value);
+    constructor();
+
+    function constructor() {
+        form.reset()
+        hora_input.setAttribute('disabled', true);
+        check();
+    }
+
+    function check() {
+        //alert('check')
+        if (is_date_selected.value == "True") {
+            hora_input.setAttribute('required', true);
+            pet_input.setAttribute('required', true);
+            attention_input.setAttribute('required', true);
+            hora_input.removeAttribute('disabled');
+            pet_input.removeAttribute('disabled');
+            attention_input.removeAttribute('disabled');
+        } else {
+            hora_input.removeAttribute('required');
+            pet_input.removeAttribute('required');
+            attention_input.removeAttribute('required');
+            hora_input.setAttribute('disabled', true);
+            pet_input.setAttribute('disabled', true);
+            attention_input.setAttribute('disabled', true);
+        }
+    }
+
+    hora_input.addEventListener("change", function () {
+        check();
+    });
+
+    appointment_button.addEventListener("click", function () {
+        let currentDate = new Date();
+        let fecha_text = fecha_input.value;
+        const array = fecha_text.split("/");
+        let day = parseInt(array[0]);
+        let month = parseInt(array[1]);
+        let year = parseInt(array[2]);
+        let date = new Date(year, month - 1, day);
+        //let date_string = date.toISOString().split('T')[0];
+        button_used.value = 'appointment';
+        if (date > currentDate) {
+            date_selected.value = fecha_text;
+            form.submit();
+        } else {
+            alert("No puede seleccionar fechas del pasado");
+        }
+    });
+</script>
+
+<script>
+    /* Bootstrap 5 JS included */
+    /* vanillajs-datepicker 1.1.4 JS included */
+
+    const getDatePickerTitle = elem => {
+        // From the label or the aria-label
+        const label = elem.nextElementSibling;
+        let titleText = '';
+        if (label && label.tagName === 'LABEL') {
+            titleText = label.textContent;
+        } else {
+            titleText = elem.getAttribute('aria-label') || '';
+        }
+        return titleText;
+    }
+
+
+    const elems = document.querySelectorAll('.datepicker_input');
+    for (const elem of elems) {
+        const datepicker = new Datepicker(elem, {
+            'format': 'dd/mm/yyyy', // UK format
+            title: getDatePickerTitle(elem)
+        });
+    }     
+</script>
 
 {% endblock %}
