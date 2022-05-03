@@ -37,22 +37,20 @@ def obtiene_llaves(diccionario:dict,llave_dicc:str)->list:
 
 def graba_diccionario_de_diccionarios(diccionario:dict,archivo:str):
     with open(archivo,'w') as fh:
-        lista_campos = obtiene_llaves_dentro(diccionario)
+        lista_campos = obtiene_llaves_dd(diccionario)
         dw = csv.DictWriter(fh,lista_campos)
         dw.writeheader()
         rows = []
         for el1 in diccionario.keys():
             for el2 in diccionario[el1].keys():
-                row = []
                 d = {}
                 for el3 in diccionario[el1][el2].keys():
                     #print(diccionario[el1][el2][el3])
-                    row.append(diccionario[el1][el2][el3])
                     d[el3] = diccionario[el1][el2][el3]
                 rows.append(d)
         dw.writerows(rows)
 
-def obtiene_llaves_dentro(diccionario:dict)->list:
+def obtiene_llaves_dd(diccionario:dict)->list:
     llaves = []
     llaves_internas = []
     llaves_finales = []
@@ -68,9 +66,33 @@ def obtiene_llaves_dentro(diccionario:dict)->list:
         llaves_finales.append(elemento)
     return llaves_finales
 
-def json_serial(obj):
-    """JSON serializer for objects not serializable by default json code"""
+def graba_diccionario_de_diccionarios_lista(diccionario:dict,archivo:str):
+    with open(archivo,'w') as fh:
+        lista_campos = obtiene_llaves_ddl(diccionario)
+        dw = csv.DictWriter(fh,lista_campos)
+        dw.writeheader()
+        rows = []
+        for el1 in diccionario.keys():
+            for el2 in diccionario[el1].keys():
+                for li in diccionario[el1][el2]:
+                    d = {}
+                    #print(diccionario[el1][el2][el3])
+                    for lf,vf in li.items():
+                        d[lf] = vf
+                    rows.append(d)
+        dw.writerows(rows)
 
-    if isinstance(obj, (datetime, date)):
-        return obj.isoformat()
-    raise TypeError ("Type %s not serializable" % type(obj))
+def obtiene_llaves_ddl(diccionario:dict)->list:
+    llaves_finales = []
+    for key in diccionario.keys():
+        l1 = key
+        break
+    for key in diccionario[l1].keys():
+        l2 = key
+        break
+    
+    for li in diccionario[l1][l2]:
+        for k in li.keys():
+            llaves_finales.append(k)
+        break
+    return llaves_finales

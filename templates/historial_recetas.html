@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block title %}Recetas
+{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block body %}
+
+<div class="container-sm">
+    <form class="row g-3" action="" method="POST">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Mascota</th>
+                    <th scope="col">Receta</th>
+                    <th scope="col">Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for id, lista in recetas.items() %}
+                    {% set ns = namespace(pet_name='', medicamentos='', fecha='') %}
+                    {% for receta in lista %}
+                        {% if ns.pet_name == '' %}
+                            {% set ns.pet_name = receta['pet_name'] %}
+                        {% endif %}
+                        {% if ns.fecha == '' %}
+                            {% set ns.fecha = receta['date'] %}
+                        {% endif %}
+                        {% set ns.medicamentos = ns.medicamentos + receta['medicine_code'] + '\n' %}
+                    {% endfor %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td> {{ns.pet_name}} </td>
+                    <td> 
+                        {% for codigo_medicina in ns.medicamentos.splitlines() %}
+                            {{cantidades_dict[id][codigo_medicina] + " x "}}{{medicinas[codigo_medicina]['name']}} <br>
+                        {% endfor %}
+                    </td>
+                    <td> {{ns.fecha}} </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+
+    {% endblock %}
