@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Atención
+{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block body %}
+
+<div class="container-sm">
+    <form class="row g-3" action="" method="POST">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Mascota</th>
+                    <th scope="col">Atencion</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Hora</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fecha in sorted_dates %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td> {{atencion[fecha]['pet_name']}} </td>
+                    <td> {{atencion[fecha]['appointment_type']}} </td>
+                    {% set date_time = atencion[fecha]['start'].split() %}
+                    {% set date = date_time[0] %}
+                    {% set time = date_time[1] %}
+                    <td> {{date}} </td>
+                    <td> {{time}} </td>
+                    {% if fecha > hoy %}
+                    <td>
+                        <button type="submit" class="btn btn-link" name="submit_button_delete" value="{{fecha}}">Cancelar cita</button>
+                    </td>
+                    {% else %}
+                    <td>
+                        
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+
+    {% endblock %}

@@ -218,6 +218,19 @@ def historial_recetas():
         else:
             return redirect("/login")
 
+@app.route("/atencion", methods=['GET'])
+def historial_atencion():
+    if request.method == 'GET':
+        if 'logged_in' in session:
+            user = session['username']
+            #print(common_types_list)
+
+            citas_usuario = citas_dict[user]
+
+            return render_template("historial_atencion.html", atencion = citas_usuario, sorted_dates = sorted(citas_usuario,reverse=True), hoy = datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        else:
+            return redirect("/login")
+
 
 if __name__ == "__main__":
     app.run(debug=True)
