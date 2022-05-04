@@ -96,3 +96,50 @@ def obtiene_llaves_ddl(diccionario:dict)->list:
             llaves_finales.append(k)
         break
     return llaves_finales
+
+def crea_diccionario_clientes(diccionario_clientes:dict)->dict:
+    diccionario_palabras = {}
+    for id, usuario in diccionario_clientes.items():
+        username = usuario['username']
+        name = usuario['name']
+        agrega_palabras(diccionario_palabras, username, usuario)
+        agrega_palabras(diccionario_palabras, name, usuario)
+        agrega_frases(diccionario_palabras, username, usuario)
+        agrega_frases(diccionario_palabras, name, usuario)
+    return diccionario_palabras
+
+def limpia_texto(texto:str)->str:
+    lista_simbolos = [',','.',';',':','/','(',')','-','_','?','¿','¡','!']
+    for simbolo in lista_simbolos:
+        texto = texto.replace(simbolo,'')
+    return texto
+
+def agrega_palabras(diccionario:dict,cadena:str, diccionario_pelicula:dict):
+    minusculas = cadena.lower()
+    cadena_limpia = limpia_texto(minusculas)
+    palabras = cadena_limpia.split(' ')
+    palabras.append(cadena_limpia)
+    for palabra in palabras:
+        if palabra not in diccionario:
+            diccionario[palabra] = [diccionario_pelicula]
+        else:
+            diccionario[palabra].append(diccionario_pelicula)
+
+def agrega_frases(diccionario:dict,frase:str, diccionario_pelicula:dict):
+    minusculas = frase.lower()
+    frase_limpia = limpia_texto(minusculas)
+    palabras = frase_limpia.split(' ')
+    lista_frase =[]
+    for i, palabra in enumerate(palabras):
+        if i+1 < len(palabras):
+            dupla = [palabra, palabras[i+1]]
+            lista_frase.append(dupla)
+        if i+2 < len(palabra):
+            triple = [palabra, palabra[i+1],palabra[i+2]]
+            lista_frase.append(triple)
+    for elemento in lista_frase:
+        frase_compuesta = ' '.join(elemento)
+        if frase_compuesta not in diccionario:
+            diccionario[frase_compuesta] = [ diccionario_pelicula]
+        else:
+            diccionario[frase_compuesta].append(diccionario_pelicula)

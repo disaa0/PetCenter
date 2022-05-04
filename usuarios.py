@@ -1,7 +1,7 @@
 import csv
 from queue import Empty
 
-from otros import graba_diccionario, graba_diccionario_de_diccionarios
+from otros import graba_diccionario, graba_diccionario_de_diccionarios, crea_diccionario_clientes
 
 def update_users_file(dic:dict, file:str):
     graba_diccionario(dic, 'username', file)

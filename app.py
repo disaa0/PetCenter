@@ -26,6 +26,7 @@ common_types_list = usuarios.crear_lista_mascotas(pets_type_file)
 citas_dict = citas.lee_diccionario_citas(citas_file)
 drugs_dict = recetas.lee_diccionario_medicinas(drugs_file)
 prescriptions_dict = recetas.lee_diccionario_recetas(prescriptions_file)
+superdiccionario_usuarios = usuarios.crea_diccionario_clientes(user_dict)
 
 
 @app.context_processor
@@ -112,57 +113,74 @@ def agendar_cita():
     availible_days_dict = get_available_days_dict()
     if request.method == 'GET':
         if 'logged_in' in session:
-            user = session['username']
-            #print(pet_dict[user])
+            type = session['type']
             availible_days_dict = get_available_days_dict()
-            #print(availible_days_dict)
-            return render_template("agendar_cita.html", mascotas=pet_dict[user], days=availible_days_dict, is_fecha_defined=False)
+            if type == 'cliente':
+                user = session['username']
+                #print(pet_dict[user])                
+                return render_template("agendar_cita.html", mascotas=pet_dict[user], days=availible_days_dict, is_fecha_defined=False, is_user_selected=True, usuario = user)
+            if type == 'usuario':
+                return render_template("agendar_cita.html", mascotas=pet_dict, days=availible_days_dict, is_fecha_defined=False, usuarios=user_dict, is_user_selected=False)
+            if type == 'admin':
+                return render_template("agendar_cita.html", mascotas=pet_dict, days=availible_days_dict, is_fecha_defined=False, usuarios=user_dict, is_user_selected=False)
+            
         else:
             return redirect("/login")
     else:
-        user = session['username']
         if request.method == 'POST':
             mensajes = []
-            print(request.form['button_used'])
-            if request.form['button_used'] == 'appointment':
-                fecha_texto = request.form['date_selected']
-                fecha = datetime.strptime(fecha_texto, '%d/%m/%Y')
-                fecha_formato = fecha.strftime('%Y-%m-%d')
-                horario = availible_days_dict[fecha_formato]
-                #print(horario[fecha_formato])
-                return render_template("agendar_cita.html", mascotas=pet_dict[user], days=availible_days_dict, is_fecha_defined=True, fecha=fecha_texto, horario=horario)
+            if 'select_user' in request.form:
+                user = request.form['select_user']
+                if user not in pet_dict:
+                    mensajes.append("Usuario "+ user +" sin mascotas activas")
+                    return render_template("agendar_cita.html", mascotas=pet_dict, days=availible_days_dict, is_fecha_defined=False, usuarios=user_dict, is_user_selected=False, mensajes=mensajes)
+                else:
+                    return render_template("agendar_cita.html", mascotas=pet_dict[user], days=availible_days_dict, is_fecha_defined=False, is_user_selected=True, usuario = user, mensajes=mensajes)
+
             else:
-                tiempo = request.form['hora']
-                ini = datetime.strptime(tiempo, '%Y-%m-%d %H:%M:%S')
-                inicio1 = ini.isoformat()
-                fin = ini + timedelta(hours=1)
-                final1 = fin.isoformat()
-                inicio = inicio1.replace('T',' ')
-                final = final1.replace('T',' ')
+                print(request.form)
+                if 'button_used' in request.form:
+                    user = session['username']
+                    if 'button_used' in request.form:
+                        if request.form['button_used'] == 'appointment':
+                            fecha_texto = request.form['date_selected']
+                            fecha = datetime.strptime(fecha_texto, '%d/%m/%Y')
+                            fecha_formato = fecha.strftime('%Y-%m-%d')
+                            horario = availible_days_dict[fecha_formato]
+                            #print(horario[fecha_formato])
+                            return render_template("agendar_cita.html", mascotas=pet_dict[user], days=availible_days_dict, is_fecha_defined=True, fecha=fecha_texto, horario=horario, is_user_selected=True, usuario = user)
+                    if 'agendar' in request.form:
+                        tiempo = request.form['hora']
+                        ini = datetime.strptime(tiempo, '%Y-%m-%d %H:%M:%S')
+                        inicio1 = ini.isoformat()
+                        fin = ini + timedelta(hours=1)
+                        final1 = fin.isoformat()
+                        inicio = inicio1.replace('T',' ')
+                        final = final1.replace('T',' ')
 
-                if user not in citas_dict:
-                    citas_dict[user] = {}
-                if inicio not in citas_dict[user]:
-                    citas_dict[user][inicio] = {}
+                        if user not in citas_dict:
+                            citas_dict[user] = {}
+                        if inicio not in citas_dict[user]:
+                            citas_dict[user][inicio] = {}
 
-                citas_dict[user][inicio] = {
-                    'username':user,
-                    'pet_name':request.form['select_pet'],
-                    'appointment_type':request.form['select_attention'],
-                    'start':inicio,
-                    'end':final
-                }
-                pet_name = citas_dict[user][inicio]['pet_name']
-                pet_type = pet_dict[user][pet_name]['type']
-                client_name = user_dict[user]['name']
-                appointment_type = citas_dict[user][inicio]['appointment_type']
-                
+                        citas_dict[user][inicio] = {
+                            'username':user,
+                            'pet_name':request.form['select_pet'],
+                            'appointment_type':request.form['select_attention'],
+                            'start':inicio,
+                            'end':final
+                        }
+                        pet_name = citas_dict[user][inicio]['pet_name']
+                        pet_type = pet_dict[user][pet_name]['type']
+                        client_name = user_dict[user]['name']
+                        appointment_type = citas_dict[user][inicio]['appointment_type']
+                        
 
-                title = 'Cita ' + appointment_type + ' - ' + user
-                text = 'Cliente: ' + client_name + '\n' + 'Mascota: ' + pet_name + '\n' + 'Tipo: ' + pet_type
-                create_event(title, text, inicio1, final1)
-                citas.update_citas_file(citas_dict, citas_file)            
-                return redirect('/')
+                        title = 'Cita ' + appointment_type + ' - ' + user
+                        text = 'Cliente: ' + client_name + '\n' + 'Mascota: ' + pet_name + '\n' + 'Tipo: ' + pet_type
+                        create_event(title, text, inicio1, final1)
+                        citas.update_citas_file(citas_dict, citas_file)            
+                        return redirect('/')
 
 
 @app.route("/administrar_mascotas", methods=['GET','POST'])
@@ -218,16 +236,17 @@ def historial_recetas():
         else:
             return redirect("/login")
 
-@app.route("/atencion", methods=['GET','POST'])
-def historial_atencion():
+@app.route("/citas", methods=['GET','POST'])
+def historial_citas():
     if request.method == 'GET':
         if 'logged_in' in session:
             user = session['username']
             #print(common_types_list)
-
+            if user not in citas_dict:
+                citas_dict[user] = {}
             citas_usuario = citas_dict[user]
 
-            return render_template("historial_atencion.html", atencion = citas_usuario, sorted_dates = sorted(citas_usuario,reverse=True), hoy = datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+            return render_template("historial_citas.html", atencion = citas_usuario, sorted_dates = sorted(citas_usuario,reverse=True), hoy = datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         else:
             return redirect("/login")
     else:
@@ -241,7 +260,33 @@ def historial_atencion():
                     citas_dict[user].pop(fecha)
                     citas.update_citas_file(citas_dict,citas_file)
                 
-                return redirect('/atencion')
+                return redirect('/citas')
+
+@app.route("/atencion", methods=['GET','POST'])
+def historial_atencion():
+    if request.method == 'GET':
+        if 'logged_in' in session:
+            user = session['username']
+            #print(common_types_list)
+            if user not in citas_dict:
+                citas_dict[user] = {}
+            citas_usuario = citas_dict[user]
+
+            return render_template("historial_citas.html", atencion = citas_usuario, sorted_dates = sorted(citas_usuario,reverse=True), hoy = datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
+        else:
+            return redirect("/login")
+    else:
+        if request.method == 'POST':
+            user = session['username']
+            if 'submit_button_delete' in request.form.keys():
+                fecha = request.form['submit_button_delete']
+                id = search_event(fecha)
+                print(id)
+                if delete_event(id):
+                    citas_dict[user].pop(fecha)
+                    citas.update_citas_file(citas_dict,citas_file)
+                
+                return redirect('/citas')
 if __name__ == "__main__":
     app.run(debug=True)
     
