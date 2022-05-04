@@ -15,8 +15,9 @@ def main():
    if not events:
        print('No upcoming events found.')
    for event in events:
+       id = event.get('id')
        start = event['start'].get('dateTime', event['start'].get('date'))
-       print(start, event['summary'])
+       print(id, start, event['summary'])
 
 if __name__ == '__main__':
    main()

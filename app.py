@@ -6,7 +6,7 @@ import login,usuarios,citas,recetas
 import os
 from datetime import datetime, timedelta
 from flask import Flask, redirect, render_template, request, session, jsonify
-from calendario import get_available_days_dict, create_event
+from calendario import delete_event, get_available_days_dict, create_event, search_event
 
 
 app = Flask(__name__)
@@ -218,7 +218,7 @@ def historial_recetas():
         else:
             return redirect("/login")
 
-@app.route("/atencion", methods=['GET'])
+@app.route("/atencion", methods=['GET','POST'])
 def historial_atencion():
     if request.method == 'GET':
         if 'logged_in' in session:
@@ -230,8 +230,18 @@ def historial_atencion():
             return render_template("historial_atencion.html", atencion = citas_usuario, sorted_dates = sorted(citas_usuario,reverse=True), hoy = datetime.now().strftime('%Y-%m-%d %H:%M:%S'))
         else:
             return redirect("/login")
-
-
+    else:
+        if request.method == 'POST':
+            user = session['username']
+            if 'submit_button_delete' in request.form.keys():
+                fecha = request.form['submit_button_delete']
+                id = search_event(fecha)
+                print(id)
+                if delete_event(id):
+                    citas_dict[user].pop(fecha)
+                    citas.update_citas_file(citas_dict,citas_file)
+                
+                return redirect('/atencion')
 if __name__ == "__main__":
     app.run(debug=True)
     
