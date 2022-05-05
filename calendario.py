@@ -19,7 +19,7 @@ def create_events_dict()->dict:
     now = datetime.utcnow().isoformat() + 'Z' # 'Z' indicates UTC time
     events_result = service.events().list(
         calendarId='primary', timeMin=now,
-        maxResults=1000, singleEvents=True,
+        maxResults=3000, singleEvents=True,
         orderBy='startTime').execute()
     events = events_result.get('items', [])
 
@@ -41,7 +41,7 @@ def create_events_dict()->dict:
 def create_week_list()->list:
     starting_day = datetime.now().date()
     week_list = []
-    for number in range(14):
+    for number in range(365):
         day = datetime(starting_day.year, starting_day.month, starting_day.day) + timedelta(days=number + 1)
         #print(day)
         week_list.append(day)
