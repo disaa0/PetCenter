@@ -83,7 +83,7 @@ def signup():
             password = request.form['password']
             name = request.form['name']
             email = request.form['email']
-            type = 'cliente'
+            type = 'client'
 
             mensajes = []
 
@@ -117,7 +117,7 @@ def agendar_cita():
             if 'client' in session:
                 session.pop('client', None)
             availible_days_dict = get_available_days_dict()
-            if type == 'cliente':
+            if type == 'client':
                 user = session['username']
                 session['client'] = user
                 #print(pet_dict[user])                
@@ -226,19 +226,35 @@ def administrar_mascotas():
 @app.route("/recetas", methods=['GET'])
 def historial_recetas():
     if request.method == 'GET':
+        mensajes = []
         if 'logged_in' in session:
-            user = session['username']
+            type = session['type']
+            if 'client' in session:
+                session.pop('client', None)
+            availible_days_dict = get_available_days_dict()
+            if type == 'client':
+                user = session['username']
+                session['client'] = user
+                print('aaAAAAA')
+                if user not in prescriptions_dict:
+                    mensajes.append('Usuario '+ user +' sin recetas')
+                    return render_template("historial_recetas.html", mensajes=mensajes)
+                else:
+                    d = {}
+                    for k, v in prescriptions_dict[user].items():
+                        for li in v:
+                            if li['prescription_id'] not in d:
+                                d[li['prescription_id']] = {}
+                            d[li['prescription_id']][li['medicine_code']] = li['quantity']
+                    #print(d)
+                    return render_template("historial_recetas.html", recetas = prescriptions_dict[user], medicinas = drugs_dict, cantidades_dict = d)
+               
+            if type == 'usuario':
+                return ''
+            if type == 'admin':
+                return ''
+
             #print(common_types_list)
-
-            d = {}
-            for k, v in prescriptions_dict[user].items():
-                for li in v:
-                    if li['prescription_id'] not in d:
-                        d[li['prescription_id']] = {}
-                    d[li['prescription_id']][li['medicine_code']] = li['quantity']
-            print(d)
-
-            return render_template("historial_recetas.html", recetas = prescriptions_dict[user], medicinas = drugs_dict, cantidades_dict = d)
         else:
             return redirect("/login")
 

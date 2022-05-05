@@ -6,7 +6,23 @@
 {% endblock %}
 {% block body %}
 
+
 <div class="container-sm">
+
+    {% if mensajes is defined %}
+    {% for mensaje in mensajes %}
+        <div class="container-fluid py-1">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                <div>
+                    {{mensaje}}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if recetas is defined %}
     <form class="row g-3" action="" method="POST">
         <table class="table">
             <thead>
@@ -43,5 +59,6 @@
             </tbody>
         </table>
     </form>
+    {% endif %}
 
     {% endblock %}
