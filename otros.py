@@ -66,6 +66,43 @@ def obtiene_llaves_dd(diccionario:dict)->list:
         llaves_finales.append(elemento)
     return llaves_finales
 
+def graba_ddd(diccionario:dict,archivo:str):
+    with open(archivo,'w') as fh:
+        lista_campos = obtiene_llaves_ddd(diccionario)
+        print(diccionario)
+        dw = csv.DictWriter(fh,lista_campos)
+        dw.writeheader()
+        rows = []
+        for el1 in diccionario.keys():
+            for el2 in diccionario[el1].keys():
+                for el3 in diccionario[el1][el2].keys():
+                    d = {}
+                    for elf in diccionario[el1][el2][el3].keys():
+                        #print(diccionario[el1][el2][el3])
+                        d[elf] = diccionario[el1][el2][el3][elf]
+                    rows.append(d)
+        dw.writerows(rows)
+
+def obtiene_llaves_ddd(diccionario:dict)->list:
+    llaves = []
+    llaves1 = []
+    llaves2 = []
+    llaves_finales = []
+    for elemento in diccionario.keys():
+        llaves.append(elemento)
+        break
+    llave1 = llaves[0]
+    for elemento in diccionario[llave1]:
+        llaves1.append(elemento)
+        break
+    llave2 = llaves1[0]
+    for elemento in diccionario[llave1][llave2]:
+        llaves2.append(elemento)
+    llave3 = llaves2[0]
+    for elemento in diccionario[llave1][llave2][llave3]:
+        llaves_finales.append(elemento)
+    return llaves_finales
+
 def graba_diccionario_de_diccionarios_lista(diccionario:dict,archivo:str):
     with open(archivo,'w') as fh:
         lista_campos = obtiene_llaves_ddl(diccionario)
