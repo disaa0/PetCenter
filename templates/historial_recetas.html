@@ -130,7 +130,7 @@
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="" method="POST" id="atencion_form">
+                <form action="" method="POST" id="recetas_form">
                     <div class="modal-header">
                         <h5 class="modal-title" id="staticBackdropLabel">Agregar atención</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -152,45 +152,43 @@
                                 <label for="sub_total" class="form-label">Agregar medicamentos</label>
                             </div>
                             <div class="col-md-12">
-                                <form action="" method="POST" id="recetas_form">
-                                    <div class="row g-3">
-                                        <div class="col-md-12">
-                                            <div class="dropdown">
-                                                <button type="button" onclick="myFunction()"
-                                                    class="dropbtn">Medicamentos</button>
-                                                <div id="myDropdown" class="dropdown-content">
-                                                    <input type="text" placeholder="Search.." id="myInput"
-                                                        onkeyup="filterFunction()">
-                                                    {% if medicinas != {} %}
-                                                    {% for code, data in medicinas.items() %}
-                                                    <button type="button" class="btn btn-link" name="select_medicine" id="select_medicine"
-                                                        value="{{code}}">{{code + ' - ' + data['name']}}</button>
-                                                    {% endfor %}
-                                                    {% endif %}
-                                                </div>
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <div class="dropdown">
+                                            <button type="button" onclick="myFunction()"
+                                                class="dropbtn">Medicamentos</button>
+                                            <div id="myDropdown" class="dropdown-content">
+                                                <input type="text" placeholder="Search.." id="myInput"
+                                                    onkeyup="filterFunction()">
+                                                {% if medicinas != {} %}
+                                                {% for code, data in medicinas.items() %}
+                                                <button type="button" class="btn btn-link" name="select_medicine"
+                                                    id="select_medicine"
+                                                    onclick="actualizar_tabla('{{code}}','{{data['name']}}')"
+                                                    value="{{code}}">{{code + ' - ' + data['name']}}</button>
+                                                {% endfor %}
+                                                {% endif %}
                                             </div>
                                         </div>
-                                        <div class="container-fluid">
-                                            <table class="table" data-toggle="table" id="tabla_medicamentos" nombre="tabla_medicamentos">
-                                                <thead>
-                                                    <tr class="d-flex">
-                                                        <th scope="col" class="col-8">Medicamento</th>
-                                                        <th scope="col" class="col-4">Cantidad</th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody>
-                                                    <tr class="d-flex">
-                                                        <td  class="col-8">Hola</td>
-                                                        <td  class="col-4">
-                                                            <input type="text" class="form-control form-control-sm"
-                                                                id="sub_total" name="sub_total" required>
-                                                        </td>
-                                                    </tr>
-                                                </tbody>
-                                            </table>
-                                        </div>
                                     </div>
-                                </form>
+                                    <div class="container-fluid">
+                                        <table class="table" data-toggle="table" id="tabla_medicamentos"
+                                            nombre="tabla_medicamentos">
+                                            <thead>
+                                                <tr class="d-flex">
+                                                    <th scope="col" class="col-8">Medicamento</th>
+                                                    <th scope="col" class="col-3">Cantidad</th>
+                                                    <th scope="col" class="col-1"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="d-flex">
+                                                    
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             </div>
 
                         </div>
@@ -235,77 +233,54 @@ toggle between hiding and showing the dropdown content */
 <script type="text/javascript">
     var form = document.getElementById('recetas_form');
     var pet_input = document.getElementById('select_pet');
-    var sub_total_input = document.getElementById('sub_total');
     var agregar_button = document.getElementById('submit_button_add');
     var tabla_medicamentos = document.getElementById('tabla_medicamentos');
+    var select_medicine = document.getElementById('select_medicine');
     var medicinas_lista = [];
 
-    //alert(is_date_selected.value);
-    constructor();
 
-    function constructor() {
-        form.reset()
-    }
+    //alert(is_date_selected.value);
+    // constructor();
+
+    // function constructor() {
+    //     form.reset()
+    // }
 
     function numberValidation(n) {
-        if (isNaN(n)) {
-            document.getElementById(
-                "numberText").innerHTML =
-                "Ingrese un valor númerico";
+        var value = Number(n);
+        var is_integer = false;
+        if (Math.floor(value) == value) {
+            is_integer = true;
+        }
+        if (isNaN(n) || !is_integer || n < 0) {
             return false;
         } else {
-            document.getElementById(
-                "numberText").innerHTML =
-                "";
             return true;
         }
     }
 
-    sub_total_input.addEventListener("change", function () {
-        if (numberValidation()) {
-            iva_input.value = sub_total_input.value * 0.16;
-            total_input.value = sub_total_input.value * 1.16;
+    function actualizar_tabla(id, nombre) {
+        if (!medicinas_lista.includes(id)) {
+            medicinas_lista.push(id);
+            $(tabla_medicamentos).find('tbody').append('<tr id="' + id + '"" class="d-flex"><td class="col-8">' + nombre + '</td><td class="col-3"><input type="text" class="form-control form-control-sm" id="c' + id + '" name="c' + id + '" required></td><td class="col-1"><button type="button" class="btn btn-link btn-sm" name="x' + id + '" id="x' + id + '" value="' + id + '">X</button></td></tr>');
+            var boton_eliminar = document.getElementById('x' + id)
+            boton_eliminar.addEventListener("click", function () {
+                $('#' + id).remove();
+                medicinas_lista.pop(id);
+            });
         }
-    });
-
-    select_medicine.addEventListener("click", function () {
-        if (!medicinas_lista.includes(select_medicine.value)){
-            medicinas_lista.push(select_medicine.value)
-            // Create an empty <tr> element and add it to the 1st position of the table:
-            var row = tabla_medicamentos.insertRow(0);
-            var nombre = row.insertCell(0);
-            var cantidad = row.insertCell(1);
-
-            // Add some text to the new cells:
-            nombre.innerHTML = <td  class="col-8">Hola</td>;
-            cell2.innerHTML = "NEW CELL2"; 
-            cantidad.setAttribute("type", "radio");
-            cell.appendChild(radio);
-
-        }
-
-    });
+    }
 
     agregar_button.addEventListener("click", function () {
         ban = false
-        try {
-            if (fecha_input.value.trim() != '') {
-                let currentDate = new Date();
-                let fecha_text = fecha_input.value;
-                const array = fecha_text.split("/");
-                let day = parseInt(array[0]);
-                let month = parseInt(array[1]);
-                let year = parseInt(array[2]);
-                let date = new Date(year, month - 1, day);
-                date_selected.value = fecha_text;
-            }
-        } catch (error) {
-            alert("Fecha invalida");
-            ban = true;
-        }
         for (var i = 0; i < form.elements.length; i++) {
             if (form.elements[i].value === '' && form.elements[i].hasAttribute('required')) {
                 alert('Faltan campos por llenar');
+                ban = true;
+                break;
+            }
+            if (form.elements[i].tagName === 'INPUT' && form.elements[i].hasAttribute('required') && !numberValidation(form.elements[i].value)) {
+                alert('Cantidades deben ser valores numericos enteros');
                 ban = true;
                 break;
             }
