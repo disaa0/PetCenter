@@ -120,10 +120,16 @@
     </table>
     {% if session['type'] == 'usuario' or session['type'] == 'admin' %}
     {% if 'client' in session %}
+    {% if mascotas|length %}
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
         Agregar receta
     </button>
+    {% else %}
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" disabled>
+        Agregar receta
+    </button>
+    {% endif %}
 
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
@@ -252,7 +258,7 @@ toggle between hiding and showing the dropdown content */
         if (Math.floor(value) == value) {
             is_integer = true;
         }
-        if (isNaN(n) || !is_integer || n < 0) {
+        if (isNaN(n) || !is_integer || n <= 0) {
             return false;
         } else {
             return true;
@@ -284,10 +290,13 @@ toggle between hiding and showing the dropdown content */
                 ban = true;
                 break;
             }
+            if (medicinas_lista.length === 0) {
+                alert('Debe agregar medicinas a la receta');
+                ban = true;
+                break;
+            }
         }
         if (!ban) {
-            iva_input.removeAttribute('disabled');
-            total_input.removeAttribute('disabled');
             form.submit();
         }
     });

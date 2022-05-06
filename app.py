@@ -3,7 +3,8 @@ from dataclasses import replace
 from passlib.hash import sha256_crypt as sha256
 import pstats
 import login,usuarios,citas,recetas,atencion
-import os
+from otros import tiene_mascotas
+import os, random
 from datetime import datetime, timedelta
 from flask import Flask, redirect, render_template, request, session, jsonify
 from calendario import delete_event, get_available_days_dict, create_event, search_event
@@ -123,7 +124,7 @@ def agendar_cita():
             if type == 'client':
                 user = session['username']
                 session['client'] = user
-                if user not in pet_dict:
+                if not tiene_mascotas(pet_dict,user):
                     mascotas = ''
                     mensajes.append("Usuario "+ user +" sin mascotas activas")
                 #print(pet_dict[user])                
@@ -142,7 +143,7 @@ def agendar_cita():
             if 'select_user' in request.form:
                 user = request.form['select_user']
                 session['client'] = user
-                if user not in pet_dict:
+                if not tiene_mascotas(pet_dict,user):
                     mensajes.append("Usuario "+ user +" sin mascotas activas")
                     return render_template("agendar_cita.html", mascotas=pet_dict, days=availible_days_dict, is_fecha_defined=False, usuarios=user_dict, is_user_selected=False, mensajes=mensajes)
                 else:
@@ -208,14 +209,14 @@ def administrar_mascotas():
                 user = session['username']
                 session['client'] = user
                 #print(common_types_list)
-                if user not in pet_dict:
-                    mensajes.append('Usted no tiene mascotas registradas')
+                if not tiene_mascotas(pet_dict,user):
+                    mensajes.append('Usted no tiene mascotas activas registradas')
                     mascotas = ''
                 else:
                     mascotas = pet_dict[user]
                 return render_template("administrar_mascotas.html", mascotas=mascotas, tipos = common_types_list, mensajes=mensajes)
             else:
-                return render_template("administrar_mascotas.html", usuarios=user_dict, mensajes=mensajes)
+                return render_template("administrar_mascotas.html", usuarios=user_dict, mascotas_completo=pet_dict, mensajes=mensajes)
 
         else:
             return redirect("/login")
@@ -284,19 +285,17 @@ def historial_recetas():
             else:
                 if session['type'] == 'user' or session['type'] == 'admin':
                     d = {}
-                    print(prescriptions_dict)
+                    #print(prescriptions_dict)
                     for u, data in prescriptions_dict.items():
                         for k, v in prescriptions_dict[u].items():
                             for li in v:
-                                print(u,k,li)
+                                #print(u,k,li)
                                 if u not in d.keys():
                                     d[u] = {}
                                 if li['prescription_id'] not in d[u].keys():
                                     d[u][li['prescription_id']] = {}
                                 d[u][li['prescription_id']][li['medicine_code']] = li['quantity']
                     return render_template("historial_recetas.html", medicinas = drugs_dict, usuarios=user_dict, recetas_completo=prescriptions_dict, cantidades_dict = d)
-
-            #print(common_types_list)
         else:
             return redirect("/login")
     else:
@@ -306,17 +305,49 @@ def historial_recetas():
             if 'select_user' in request.form:
                 user = request.form['select_user']
                 session['client'] = user
+                if not tiene_mascotas(pet_dict,user):
+                    mensajes.append('Usuario ' + user + ' sin mascotas activas')
+                    mascotas = {}
+                else:
+                    mascotas = pet_dict[user]
                 if user not in prescriptions_dict:
                     mensajes.append('Usuario ' + user + ' sin recetas')
-                    recetas = {}
+                    recetas_enviar = {}
                 else:
                     for k, v in prescriptions_dict[user].items():
                         for li in v:
                             if li['prescription_id'] not in d:
                                 d[li['prescription_id']] = {}
                             d[li['prescription_id']][li['medicine_code']] = li['quantity']
-                    recetas = prescriptions_dict[user]
-                return render_template("historial_recetas.html", recetas = recetas, mascotas=pet_dict[user], medicinas = drugs_dict, cantidades_dict = d, mensajes=mensajes)
+                    recetas_enviar = prescriptions_dict[user]
+                return render_template("historial_recetas.html", recetas = recetas_enviar, mascotas=mascotas, medicinas = drugs_dict, cantidades_dict = d, mensajes=mensajes)
+            else:
+                user = session['client']
+                pet_name = request.form['select_pet']
+                hoy = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+                code = datetime.now().strftime('%Y%m%d%H%M%S') + chr(random.randint(65, 122))
+                medicamentos = []
+                for element in request.form:
+                    if element[1:] in drugs_dict:
+                        medicamentos.append(element[1:])
+                if user not in prescriptions_dict:
+                            prescriptions_dict[user] = {}
+                if code not in prescriptions_dict[user]:
+                    prescriptions_dict[user][code] = []
+                print(medicamentos)
+                for medicamento in medicamentos:
+                    print(user,pet_name,code,request.form['c'+medicamento],hoy)
+                    prescriptions_dict[user][code].append({
+                    'prescription_id'   : code,
+                    'username'          : user,
+                    'pet_name'          : pet_name,
+                    'medicine_code'     : medicamento,
+                    'quantity'          : request.form['c'+medicamento],
+                    'date'              : hoy
+                })
+                recetas.update_prescriptions_file(prescriptions_dict,prescriptions_file)
+                return redirect('/recetas')
+
 
 @app.route("/citas", methods=['GET','POST'])
 def historial_citas():
@@ -380,7 +411,7 @@ def historial_atencion():
                             if id not in user_dates_dict:
                                 user_dates_dict[id] = []
                             user_dates_dict[id].append(date)
-                if user not in pet_dict:
+                if not tiene_mascotas(pet_dict,user):
                     mascotas = {}
                 else:
                     mascotas = pet_dict[user]
@@ -413,7 +444,7 @@ def historial_atencion():
             if 'select_user' in request.form:
                 user = request.form['select_user']
                 session['client'] = user
-                if user not in pet_dict:
+                if not tiene_mascotas(pet_dict,user):
                     mascotas = {}
                 else:
                     mascotas = pet_dict[user]
@@ -461,7 +492,7 @@ def historial_atencion():
                         }
                         atencion.update_atencion_file(atencion_dict,atencion_file)
                         return redirect('/atencion')
-
+                        
 if __name__ == "__main__":
     app.run(debug=True)
     

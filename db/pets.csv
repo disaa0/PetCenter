@@ -2,4 +2,8 @@ username,pet_name,type,active
 disaa,Garu,Gato,True
 disaa,Peach,Perro,True
 disaa,Fupa,Hurón,True
-pepe,Peperro,Perro,True
+pepe,Peperro,Perro,False
+pepe,Gato,Gato,False
+pepe,Aaaaaaaaaaa,Reptil,True
+macsmacen,Perro De Prueba,Perro,False
+macsmacen,Loro,Ave,True

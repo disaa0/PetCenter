@@ -180,3 +180,12 @@ def agrega_frases(diccionario:dict,frase:str, diccionario_pelicula:dict):
             diccionario[frase_compuesta] = [ diccionario_pelicula]
         else:
             diccionario[frase_compuesta].append(diccionario_pelicula)
+
+def tiene_mascotas(mascotas:dict, usuario:str)->bool:
+    ret = False
+    if usuario in mascotas:
+        for mascota, valores in mascotas[usuario].items():
+            if valores['active'] == 'True':
+                ret = True
+                break
+    return ret

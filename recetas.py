@@ -39,6 +39,4 @@ def lee_diccionario_medicinas (archivo:str)->dict:
     return diccionario
 
 diccionario_recetas = lee_diccionario_recetas('db/prescriptions.csv')
-#print(diccionario_recetas)
-
-update_prescriptions_file(diccionario_recetas,'db/testfile.csv')
+print(diccionario_recetas)

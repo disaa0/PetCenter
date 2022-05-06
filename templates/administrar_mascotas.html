@@ -46,9 +46,16 @@
         <table class="table" data-toggle="table" data-search="true">
             <thead>
                 <tr>
+                    {% if mascotas_completo is defined %}
+                    <th scope="col">Usuario</th>
+                    {% else %}
                     <th scope="col">#</th>
-                    <th scope="col">Nombre</th>
+                    {% endif %}
+                    <th scope="col">Nombre de mascota</th>
                     <th scope="col">Tipo</th>
+                    {% if session['type'] == 'user' or session['type'] == 'admin'%}
+                    <th scope="col">Activo</th>
+                    {% endif %}
                 </tr>
             </thead>
             <tbody>
@@ -56,19 +63,41 @@
                 {% if mascotas != '' %}
                 <form class="row g-3" action="" method="POST">
                 {% for mascota, datos in mascotas.items() %}
-                {% if datos["active"] == "True" %}
-                
+                {% if session['type'] == 'client' and datos['active'] == 'False'%}
+                {% else %}
                 <tr>
                     <th scope="row">{{ loop.index }}</th>
                     <td> {{ datos["pet_name"] }} </td>
                     <td> {{datos["type"]}} </td>
-                    
+                    {% if session['type'] == 'admin' or session['type'] == 'user' %}
+                    <td> {{ datos["active"] }} </td>
+                    {% endif %}
                     <td>
+                        {% if datos["active"] == 'True' %}
                         <button type="submit" class="btn btn-link" name="submit_button_delete" value="{{ datos['pet_name' ]}}">Eliminar</button>
+                        {% endif %}
                     </td>
-                
                 </tr>
                 {% endif %}
+                {% endfor %}
+                </form>
+                {% endif %}
+                {% endif %}
+
+                {% if mascotas_completo is defined %}
+                {% if mascotas_completo != '' %}
+                <form class="row g-3" action="" method="POST">
+                {% for usuario, usuario_datos in mascotas_completo.items() %}
+                {% for mascota, datos in usuario_datos.items() %}
+                <tr>
+                    <th> {{ usuario }} </th>
+                    <td> {{ datos["pet_name"] }} </td>
+                    <td> {{datos["type"]}} </td>
+                    {% if session['type'] == 'admin' or session['type'] == 'user' %}
+                    <td> {{ datos["active"] }} </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
                 {% endfor %}
                 </form>
                 {% endif %}
@@ -122,8 +151,9 @@
             </div>
         </div>
     </div>
+    {% endif %}
 </div>
-{% endif %}
+
 <!-- scripts -->
 <script type="text/javascript">
     var form = document.getElementById('pet_form')
