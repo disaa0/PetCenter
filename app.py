@@ -3,7 +3,7 @@ from dataclasses import replace
 from passlib.hash import sha256_crypt as sha256
 import pstats
 import login,usuarios,citas,recetas,atencion
-from otros import tiene_mascotas
+from otros import tiene_mascotas, usuario_activo
 import os, random
 from datetime import datetime, timedelta
 from flask import Flask, redirect, render_template, request, session, jsonify
@@ -38,7 +38,7 @@ def handle_context():
 
 @app.route("/")
 def index():
-    return render_template("index.html")
+    return render_template("index.html", index='index')
 
 
 @app.route("/login", methods=['GET','POST'])
@@ -52,7 +52,7 @@ def login():
         if request.method == 'POST':
             username = request.form['username']
             password = request.form['password']
-            if username in user_dict:
+            if usuario_activo(user_dict,username):
                 password_hashed = user_dict[username]['password']
                 contrasenia_correcta = sha256.verify(password,password_hashed)
                 if contrasenia_correcta == True:
@@ -87,6 +87,7 @@ def signup():
             name = request.form['name']
             email = request.form['email']
             type = 'client'
+            global mails
 
             mensajes = []
 
@@ -98,9 +99,11 @@ def signup():
                             'name' : name,
                             'type' : type,
                             'email' : email,
-                            'password' : password_hashed
+                            'password' : password_hashed,
+                            'active' : 'True'
                         }
                         usuarios.update_users_file(user_dict,users_file)
+                        mails = usuarios.crear_lista_emails(user_dict)
                         return redirect("/login")
             else:
                 if email in mails:
@@ -492,7 +495,74 @@ def historial_atencion():
                         }
                         atencion.update_atencion_file(atencion_dict,atencion_file)
                         return redirect('/atencion')
-                        
+
+
+@app.route("/usuarios", methods=['GET','POST'])
+def funcion_usuarios():
+    mensajes = []
+    if request.method == 'GET':
+        if 'logged_in' in session:
+            if 'client' in session:
+                session.pop('client', None)
+            type = session['type']
+            if type == 'admin':
+                return render_template('usuarios.html', usuarios=user_dict, action='mostrar', mensajes=mensajes)
+            else:
+                redirect('/')
+        else:
+            return redirect("/login")
+    else:
+        if request.method == 'POST':
+            if 'select_user' in request.form:
+                user = request.form['select_user']
+                session['client'] = user
+                return render_template("usuarios.html", usuario=user_dict[user], action='modificar', mensajes=mensajes)
+            if 'agregar_usuario_boton' in request.form:
+                return render_template("usuarios.html", action='agregar', mensajes=mensajes)
+            if 'agregar' in request.form:
+                global mails
+                if 'username' in request.form:
+                    username = request.form['username']
+                else:
+                    username = request.form['username_hidden']
+                name = request.form['name']
+                email = request.form['email']
+                type = request.form['type']
+                if username in user_dict:
+                    user_dict[username]['name'] = name
+                    user_dict[username]['type'] = type
+                    user_dict[username]['email'] = email
+                    user_dict[username]['active'] = 'True'
+                    usuarios.update_users_file(user_dict,users_file)
+                    mails = usuarios.crear_lista_emails(user_dict)
+                    return redirect("/usuarios")
+                elif email not in mails:
+                    password = request.form['password']
+                    password_hashed = sha256.encrypt(password)
+                    user_dict[username] = {
+                        'username' : username,
+                        'name' : name,
+                        'type' : type,
+                        'email' : email,
+                        'password' : password_hashed,
+                        'active' : 'True'
+                    }
+                    usuarios.update_users_file(user_dict,users_file)
+                    mails = usuarios.crear_lista_emails(user_dict)
+                    return redirect("/usuarios")
+                else:
+                    if email in mails:
+                        msg = f'Email ya registrado.'
+                        mensajes.append(msg)
+                    if username in user_dict:
+                        msg = f'Usuario ya existe.'
+                        mensajes.append(msg)
+                    return render_template("usuarios.html", action='agregar', mensajes=mensajes)
+            if 'submit_button_delete' in request.form:
+                user = request.form['submit_button_delete']
+                user_dict[user]['active'] = 'False'
+                usuarios.update_users_file(user_dict,users_file)
+                return render_template("usuarios.html", usuarios=user_dict, action='mostrar', mensajes=mensajes)
 if __name__ == "__main__":
     app.run(debug=True)
     

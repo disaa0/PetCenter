@@ -37,15 +37,20 @@
             <button class="btn btn-primary" type="submit">Crear cuenta</button>
         </div>
     </form>
+    {% if mensajes is defined %}
     {% for mensaje in mensajes %}
-        <div class="container-fluid py-1">
-            <div class="alert alert-danger d-flex align-items-center" role="alert">
-                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
-                <div>
-                    {{mensaje}}
-                </div>
+    <div class="container-fluid py-1">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div>
+                {{mensaje}}
             </div>
         </div>
+    </div>
+    {% endfor %}
+    {% endif %}
     {% endfor %}
 </div>
 {% endblock %}

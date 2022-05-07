@@ -33,8 +33,10 @@
             <div id="myDropdown" class="dropdown-content">
                 <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
                 {% for user, data in usuarios.items() %}
+                {% if data['active'] == 'True'%}
                 <button type="submit" class="btn btn-link" name="select_user" value="{{user}}">{{user + ' - ' +
                     data['name']}}</button>
+                {% endif %}
                 {% endfor %}
             </div>
         </div>

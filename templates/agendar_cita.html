@@ -86,7 +86,9 @@
                     disabled="{{ not is_fecha_defined }}">
                     <option value="" selected>Seleccione</option>
                     {% for mascota in mascotas %}
+                    {% if mascota['active'] == 'True'%}
                     <option value="{{ mascota }}">{{ mascota }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
             </div>
@@ -96,7 +98,7 @@
                     disabled="{{ not is_fecha_defined }}">
                     <option value="" selected>Seleccione</option>
                     <option value="Boutique">Boutique</option>
-                    <option value="Boutique">Veterinaria</option>
+                    <option value="Veterinaria">Veterinaria</option>
                 </select>
             </div>
             <div class="col-12">

@@ -1,4 +1,5 @@
-username,username,name,type,email,password
-pepe,pepe,Pepe Completo,client,pepe@gmail.com,$5$rounds=535000$3Fg4qcoYkyhIKPts$ae/ERq52JnLWFnf9dML.OjxcpYZiVxtrSF4mdaQ/c/D
-disaa,disaa,Santiago Con,admin,disaan@outlook.com,$5$rounds=535000$4Xan0vMMjD2gZH8T$McpJ/ArffmxGIr2Ff7uw4J0A12o9Uspa8wfRfaDc147
-macsmacen,macsmacen,German Machado,admin,macsmacen@gmail.com,$5$rounds=535000$4Xan0vMMjD2gZH8T$McpJ/ArffmxGIr2Ff7uw4J0A12o9Uspa8wfRfaDc147
+username,username,name,type,email,password,active
+pepe,pepe,Pepe Completo2,client,pepe2@gmail.com,$5$rounds=535000$3Fg4qcoYkyhIKPts$ae/ERq52JnLWFnf9dML.OjxcpYZiVxtrSF4mdaQ/c/D,True
+disaa,disaa,Santiago Con,admin,disaan@outlook.com,$5$rounds=535000$4Xan0vMMjD2gZH8T$McpJ/ArffmxGIr2Ff7uw4J0A12o9Uspa8wfRfaDc147,True
+macsmacen,macsmacen,German Machado,admin,macsmacen@gmail.com,$5$rounds=535000$4Xan0vMMjD2gZH8T$McpJ/ArffmxGIr2Ff7uw4J0A12o9Uspa8wfRfaDc147,True
+jau,jau,jau,user,jau@jau.com,$5$rounds=535000$8HxrlArwIL3bVkEB$sISDokca8H8Hq6PjBG2RcGRkNc1PUoD3VZCqC.O.i40,False

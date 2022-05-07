@@ -38,5 +38,5 @@ def lee_diccionario_medicinas (archivo:str)->dict:
         print(f"No se pudo abrir el archivo {archivo}")
     return diccionario
 
-diccionario_recetas = lee_diccionario_recetas('db/prescriptions.csv')
-print(diccionario_recetas)
+#diccionario_recetas = lee_diccionario_recetas('db/prescriptions.csv')
+#print(diccionario_recetas)

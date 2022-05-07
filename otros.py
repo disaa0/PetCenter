@@ -69,7 +69,7 @@ def obtiene_llaves_dd(diccionario:dict)->list:
 def graba_ddd(diccionario:dict,archivo:str):
     with open(archivo,'w') as fh:
         lista_campos = obtiene_llaves_ddd(diccionario)
-        print(diccionario)
+        #print(diccionario)
         dw = csv.DictWriter(fh,lista_campos)
         dw.writeheader()
         rows = []
@@ -185,6 +185,15 @@ def tiene_mascotas(mascotas:dict, usuario:str)->bool:
     ret = False
     if usuario in mascotas:
         for mascota, valores in mascotas[usuario].items():
+            if valores['active'] == 'True':
+                ret = True
+                break
+    return ret
+
+def usuario_activo(user:dict, usuarios:str)->bool:
+    ret = False
+    if user in usuarios:
+        for usuario, valores in usuarios[user].items():
             if valores['active'] == 'True':
                 ret = True
                 break
