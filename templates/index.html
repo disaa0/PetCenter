@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+{% block title %}
+Inicio
+{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+
+{% block header %}
+
+  <section class=" slider_section position-relative">
+    <div class="slider_bg_box">
+      <img src="/static/images/slider-bg.png" alt="">
+    </div>
+    <div class="container">
+      <div id="carouselExampleIndicators" class="carousel slide" data-ride="carousel">
+        <ol class="carousel-indicators">
+          <li data-target="#carouselExampleIndicators" data-slide-to="0" class="active"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="1"></li>
+          <li data-target="#carouselExampleIndicators" data-slide-to="2"></li>
+        </ol>
+        <div class="carousel-inner">
+          <div class="carousel-item active">
+            <div class="row">
+              <div class="col-md-7 col-lg-6">
+                <div class="detail-box">
+                  <h1>
+                    Bienvenido
+                    <br>A nuestro Pet Center
+                  </h1>
+                  <p>
+                    It is a long established fact that a reader will be distracted
+                    by the readable content of a page when looking at its layout.
+                    The point of using Lorem Ipsum is that it has a more-or-less
+                    normal distribution of letters, as
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="row">
+              <div class="col-md-7 col-lg-6">
+                <div class="detail-box">
+                  <h1>
+                    Bienvenido
+                    <br>A nuestro Pet Center
+                  </h1>
+                  <p>
+                    It is a long established fact that a reader will be distracted
+                    by the readable content of a page when looking at its layout.
+                    The point of using Lorem Ipsum is that it has a more-or-less
+                    normal distribution of letters, as
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="carousel-item">
+            <div class="row">
+              <div class="col-md-7 col-lg-6">
+                <div class="detail-box">
+                  <h1>
+                    Bienvenido
+                    <br>A nuestro Pet Center
+                  </h1>
+                  <p>
+                    It is a long established fact that a reader will be distracted
+                    by the readable content of a page when looking at its layout.
+                    The point of using Lorem Ipsum is that it has a more-or-less
+                    normal distribution of letters, as
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+{% endblock %}
+
+{% block body %}
+
+
+  <!-- about section -->
+
+  <section class="about_section layout_padding">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="img-box">
+            <img src="/static/images/check-image.png" alt="" />
+          </div>
+        </div>
+        <div class="col-lg-6">
+          <div class="detail-box">
+            <div class="heading_container">
+              <h2>
+                  Quienes somos
+                <hr>
+              </h2>
+              <p>Pet center es una empresa dedicada al cuidado de las mascotas, que lleva en el mercado desde el año 2002, trabajando en pro del bienestar de cada mascota.</p>
+              <p>Ofrecemos bienestar a cada una de nuestras mascotas, y que sus familias entiendan los deberes y los derechos que tienen las mascotas desde el instante que entran a formar parte de sus vidas.</p>
+              <p>Nuestro grupo de trabajo comparte valores y principios éticos de respeto, responsabilidad y compromiso, superándolas expectativas de nuestros clientes y entregando calidad y satisfacción en nuestros servicios.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- end about section -->
+
+  <!-- wedo section -->
+
+  <section class="wedo_section layout_padding-bottom py-4">
+    <div class="container">
+      <div class="heading_container heading_center">
+        <h2>
+          <hr>
+          Lo que hacemos
+          <hr>
+        </h2>
+        <p>Con el plan de ayudar        </p>
+      </div>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="box">
+            <div class="img-box">
+              <img src="/static/images/s1.png" alt="">
+            </div>
+            <div class="detail-box">
+              <h6>
+                Pet Center
+              </h6>
+              <p>
+                Con la finalidad de dar el mejor servicio, disponemos con instalaciones equipadas y con la más alta tecnología para la atención y diagnóstico oportuno de tus mascotas.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="box">
+            <div class="img-box">
+              <img src="/static/images/s2.png" alt="">
+            </div>
+            <div class="detail-box">
+              <h6>
+                Pet Shop
+              </h6>
+              <p>
+                En nuestra tienda para mascotas, encontrarás todo tipo de accesorios y utilidades que te podrán facilitar la vida con tu mascota y a su vez mejorar su salud y estado de ánimo.
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="box">
+            <div class="img-box">
+              <img src="/static/images/s3.png" alt="">
+            </div>
+            <div class="detail-box">
+              <h6>
+                Pet Service
+              </h6>
+              <p>
+                Ofrecemos todo tipo de servicios especializados y de la mejor calidad, siempre pensando en la salud y el bienestar de las mascota y en la tranquilidad de nuestros usuarios.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- end wedo section -->
+
+  <!-- gallery section -->
+
+  <div class="gallery_section ">
+    <div class="container-fluid">
+      <div class="row">
+        <div class=" col-sm-8 col-md-6 px-0">
+          <div class="img-box">
+            <img src="/static/images/g1.jpg" alt="">
+            <div>
+              <a href="/static/images/g1.jpg">
+                <i class="fa fa-picture-o" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4 col-md-3 px-0">
+          <div class="img-box">
+            <img src="/static/images/g2.jpg" alt="">
+            <div>
+              <a href="/static/images/g2.jpg">
+                <i class="fa fa-picture-o" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3 px-0">
+          <div class="img-box">
+            <img src="/static/images/g3.jpg" alt="">
+            <div>
+              <a href="/static/images/g3.jpg">
+                <i class="fa fa-picture-o" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-6 col-md-3 px-0">
+          <div class="img-box">
+            <img src="/static/images/g4.jpg" alt="">
+            <div>
+              <a href="/static/images/g4.jpg">
+                <i class="fa fa-picture-o" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-4 col-md-3 px-0">
+          <div class="img-box">
+            <img src="/static/images/g5.jpg" alt="">
+            <div>
+              <a href="/static/images/g5.jpg">
+                <i class="fa fa-picture-o" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <div class="col-sm-8 col-md-6 px-0">
+          <div class="img-box">
+            <img src="/static/images/g6.jpg" alt="">
+            <div>
+              <a href="/static/images/g6.jpg">
+                <i class="fa fa-picture-o" aria-hidden="true"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- end gallery section -->
+
+{% endblock %}
