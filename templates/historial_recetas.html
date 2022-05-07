@@ -1,0 +1,304 @@
+{% extends "base.html" %}
+{% block title %}Recetas
+{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block body %}
+
+
+<div class="container-sm">
+
+    {% if mensajes is defined %}
+    {% for mensaje in mensajes %}
+    <div class="container-fluid py-1">
+        <div class="alert alert-danger d-flex align-items-center" role="alert">
+            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                <use xlink:href="#exclamation-triangle-fill" />
+            </svg>
+            <div>
+                {{mensaje}}
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if session['type'] == 'user' or session['type'] == 'admin' %}
+    {% if 'client' not in session %}
+
+    <form action="" method="POST">
+        <div class="dropdown">
+            <button type="button" onclick="myFunction()" class="dropbtn">Usuario</button>
+            <div id="myDropdown" class="dropdown-content">
+                <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+                {% for user, data in usuarios.items() %}
+                <button type="submit" class="btn btn-link" name="select_user" value="{{user}}">{{user + ' - ' +
+                    data['name']}}</button>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+
+    {% else %}
+    {{'Usuario: ' + session['client'] + ' - '}}
+    <a href="/recetas">Cambiar de usuario</a>
+
+    {% endif %}
+    {% endif %}
+
+    <table class="table" data-toggle="table" data-search="true">
+        <thead>
+            <tr>
+                {% if recetas_completo is defined %}
+                <th scope="col" data-sortable="true">Usuario</th>
+                {% else %}
+                <th scope="col">#</th>
+                {% endif %}
+                <th scope="col">Mascota</th>
+                <th scope="col">Receta</th>
+                <th scope="col" data-sortable="true">Fecha</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if recetas is defined %}
+            {% for id, lista in recetas.items() %}
+            {% set ns = namespace(pet_name='', medicamentos='', fecha='') %}
+            {% for receta in lista %}
+            {% if ns.pet_name == '' %}
+            {% set ns.pet_name = receta['pet_name'] %}
+            {% endif %}
+            {% if ns.fecha == '' %}
+            {% set ns.fecha = receta['date'] %}
+            {% endif %}
+            {% set ns.medicamentos = ns.medicamentos + receta['medicine_code'] + '\n' %}
+            {% endfor %}
+            <tr>
+                <th scope="row">{{ loop.index }}</th>
+                <td> {{ns.pet_name}} </td>
+                <td>
+                    {% for codigo_medicina in ns.medicamentos.splitlines() %}
+                    {{cantidades_dict[id][codigo_medicina] + " x "}}{{medicinas[codigo_medicina]['name']}} <br>
+                    {% endfor %}
+                </td>
+                <td> {{ns.fecha}} </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+
+            {% if recetas_completo is defined %}
+            {% for user, id_data in recetas_completo.items() %}
+            {% for id, lista in id_data.items() %}
+            {% set ns = namespace(username='',pet_name='', medicamentos='', fecha='') %}
+            {% for receta in lista %}
+            {% if ns.pet_name == '' %}
+            {% set ns.pet_name = receta['pet_name'] %}
+            {% endif %}
+            {% if ns.fecha == '' %}
+            {% set ns.fecha = receta['date'] %}
+            {% endif %}
+            {% if ns.username == '' %}
+            {% set ns.username = receta['username'] %}
+            {% endif %}
+            {% set ns.medicamentos = ns.medicamentos + receta['medicine_code'] + '\n' %}
+            {% endfor %}
+            <tr>
+                <th scope="row">{{ ns.username }}</th>
+                <td> {{ns.pet_name}} </td>
+                <td>
+                    {% for codigo_medicina in ns.medicamentos.splitlines() %}
+                    {{cantidades_dict[ns.username][id][codigo_medicina] + " x "}}{{medicinas[codigo_medicina]['name']}}
+                    <br>
+                    {% endfor %}
+                </td>
+                <td> {{ns.fecha}} </td>
+            </tr>
+            {% endfor %}
+            {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+    {% if session['type'] == 'usuario' or session['type'] == 'admin' %}
+    {% if 'client' in session %}
+    {% if mascotas|length %}
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        Agregar receta
+    </button>
+    {% else %}
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" disabled>
+        Agregar receta
+    </button>
+    {% endif %}
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="" method="POST" id="recetas_form">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel">Agregar atención</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="col-md-12">
+                                <label for="select_attention" class="form-label">Mascota</label>
+                                <select class="form-select" aria-label="Select" id="select_pet" name="select_pet"
+                                    required>
+                                    <option value="" selected>Seleccione</option>
+                                    {% for mascota in mascotas %}
+                                    <option value="{{ mascota }}">{{ mascota }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <span id="numberText"></span>
+                            <div class="col-md-12">
+                                <label for="sub_total" class="form-label">Agregar medicamentos</label>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="row g-3">
+                                    <div class="col-md-12">
+                                        <div class="dropdown">
+                                            <button type="button" onclick="myFunction()"
+                                                class="dropbtn">Medicamentos</button>
+                                            <div id="myDropdown" class="dropdown-content">
+                                                <input type="text" placeholder="Search.." id="myInput"
+                                                    onkeyup="filterFunction()">
+                                                {% if medicinas != {} %}
+                                                {% for code, data in medicinas.items() %}
+                                                <button type="button" class="btn btn-link" name="select_medicine"
+                                                    id="select_medicine"
+                                                    onclick="actualizar_tabla('{{code}}','{{data['name']}}')"
+                                                    value="{{code}}">{{code + ' - ' + data['name']}}</button>
+                                                {% endfor %}
+                                                {% endif %}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="container-fluid">
+                                        <table class="table" data-toggle="table" id="tabla_medicamentos"
+                                            nombre="tabla_medicamentos">
+                                            <thead>
+                                                <tr class="d-flex">
+                                                    <th scope="col" class="col-8">Medicamento</th>
+                                                    <th scope="col" class="col-3">Cantidad</th>
+                                                    <th scope="col" class="col-1"></th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr class="d-flex">
+                                                    
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" name="submit_button_add"
+                            id="submit_button_add">Crear</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+</div>
+<script>
+    /* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+    function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function filterFunction() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        div = document.getElementById("myDropdown");
+        a = div.getElementsByTagName("button");
+        for (i = 0; i < a.length; i++) {
+            txtValue = a[i].textContent || a[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                a[i].style.display = "";
+            } else {
+                a[i].style.display = "none";
+            }
+        }
+    } 
+</script>
+
+<!-- scripts -->
+<script type="text/javascript">
+    var form = document.getElementById('recetas_form');
+    var pet_input = document.getElementById('select_pet');
+    var agregar_button = document.getElementById('submit_button_add');
+    var tabla_medicamentos = document.getElementById('tabla_medicamentos');
+    var select_medicine = document.getElementById('select_medicine');
+    var medicinas_lista = [];
+
+
+    //alert(is_date_selected.value);
+    // constructor();
+
+    // function constructor() {
+    //     form.reset()
+    // }
+
+    function numberValidation(n) {
+        var value = Number(n);
+        var is_integer = false;
+        if (Math.floor(value) == value) {
+            is_integer = true;
+        }
+        if (isNaN(n) || !is_integer || n <= 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    function actualizar_tabla(id, nombre) {
+        if (!medicinas_lista.includes(id)) {
+            medicinas_lista.push(id);
+            $(tabla_medicamentos).find('tbody').append('<tr id="' + id + '"" class="d-flex"><td class="col-8">' + nombre + '</td><td class="col-3"><input type="text" class="form-control form-control-sm" id="c' + id + '" name="c' + id + '" required></td><td class="col-1"><button type="button" class="btn btn-link btn-sm" name="x' + id + '" id="x' + id + '" value="' + id + '">X</button></td></tr>');
+            var boton_eliminar = document.getElementById('x' + id)
+            boton_eliminar.addEventListener("click", function () {
+                $('#' + id).remove();
+                medicinas_lista.pop(id);
+            });
+        }
+    }
+
+    agregar_button.addEventListener("click", function () {
+        ban = false
+        for (var i = 0; i < form.elements.length; i++) {
+            if (form.elements[i].value === '' && form.elements[i].hasAttribute('required')) {
+                alert('Faltan campos por llenar');
+                ban = true;
+                break;
+            }
+            if (form.elements[i].tagName === 'INPUT' && form.elements[i].hasAttribute('required') && !numberValidation(form.elements[i].value)) {
+                alert('Cantidades deben ser valores numericos enteros');
+                ban = true;
+                break;
+            }
+            if (medicinas_lista.length === 0) {
+                alert('Debe agregar medicinas a la receta');
+                ban = true;
+                break;
+            }
+        }
+        if (!ban) {
+            form.submit();
+        }
+    });
+</script>
+{% endblock %}

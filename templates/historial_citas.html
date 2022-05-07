@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block title %}Atención
+{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block body %}
+
+<div class="container-sm">
+
+    {% if mensajes is defined %}
+    {% for mensaje in mensajes %}
+        <div class="container-fluid py-1">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                <div>
+                    {{mensaje}}
+                </div>
+            </div>
+        </div>
+    {% endfor %}
+    {% endif %}
+
+    {% if session['type'] == 'user' or session['type'] == 'admin' %}
+    {% if 'client' not in session %}
+    
+    <form action="" method="POST">
+        <div class="dropdown">
+            <button type="button" onclick="myFunction()" class="dropbtn">Usuario</button>
+            <div id="myDropdown" class="dropdown-content">
+                <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+                {% for user, data in usuarios.items() %}
+                <button type="submit" class="btn btn-link" name="select_user" value="{{user}}">{{user + ' - ' + data['name']}}</button>
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+
+    {% else %}
+    {{'Usuario: ' + session['client'] + ' - '}}
+    <a href="/citas">Cambiar de usuario</a>
+
+    {% endif %}
+    {% endif %}
+
+
+    <form class="row g-3" action="" method="POST">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Mascota</th>
+                    <th scope="col">Atencion</th>
+                    <th scope="col">Fecha</th>
+                    <th scope="col">Hora</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for fecha in sorted_dates %}
+                <tr>
+                    <th scope="row">{{ loop.index }}</th>
+                    <td> {{atencion[fecha]['pet_name']}} </td>
+                    <td> {{atencion[fecha]['appointment_type']}} </td>
+                    {% set date_time = atencion[fecha]['start'].split() %}
+                    {% set date = date_time[0] %}
+                    {% set time = date_time[1] %}
+                    <td> {{date}} </td>
+                    <td> {{time}} </td>
+                    {% if fecha > hoy %}
+                    <td>
+                        <button type="submit" class="btn btn-link" name="submit_button_delete" value="{{fecha}}">Cancelar cita</button>
+                    </td>
+                    {% else %}
+                    <td>
+                        
+                    </td>
+                    {% endif %}
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </form>
+</div>
+<script>
+    /* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+    function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function filterFunction() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        div = document.getElementById("myDropdown");
+        a = div.getElementsByTagName("button");
+        for (i = 0; i < a.length; i++) {
+            txtValue = a[i].textContent || a[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                a[i].style.display = "";
+            } else {
+                a[i].style.display = "none";
+            }
+        }
+    } 
+</script>
+{% endblock %}
