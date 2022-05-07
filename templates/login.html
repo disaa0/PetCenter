@@ -5,42 +5,47 @@
 {% block head %}
 {{ super() }}
 {% endblock %}
-{% block body %}
-
-
-<div class="container-sm">
-    <h2>Iniciar sesión</h2>
-    <h5>Introduzca su usuario y contraseña</h5>
+{% block header %}
 
     {% if mensaje|length %}
-    <div class="container-fluid py-1">
-        <div class="alert alert-danger d-flex align-items-center" role="alert">
-            <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
-            <div>
-                {{mensaje}}
+        <div class="container-fluid py-1">
+            <div class="alert alert-danger d-flex align-items-center" role="alert">
+                <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:"><use xlink:href="#exclamation-triangle-fill"/></svg>
+                <div>
+                    {{mensaje}}
+                </div>
             </div>
-          </div>
-    </div>
+        </div>
     {% endif %}
 
     <form action="" method="POST">
-        <div class="mb-3">
-            <label for="username" class="form-label">Usuario</label>
-            <input type="text" class="form-control" id="username" name="username">
-        </div>
-        <div class="mb-3">
-            <label for="password" class="form-label">Contraseña</label>
-            <input type="password" class="form-control" id="password" name="password">
-        </div>
-        <div>
-            <a class="dropdown-item" href="/signup">¿No tienes cuenta? Regístrate</a>
-            <a class="dropdown-item" href="/password_recovery">¿Olvidó su contraseña?</a>
-        </div>
-        <button type="submit" class="btn btn-primary mt-2" name="enviar" value="Enviar">Enviar</button>
+
+        <main class="form-signin">
+            <form>
+            <img class="mb-4" src="/static/images/logo.png" alt="" width="72" height="57">
+            <h1 class="h3 mb-3 fw-normal">Iniciar sesión</h1>
+        
+            <div class="form-floating">
+                <input type="text" class="form-control" id="username" name="username" placeholder="name@example.com">
+                <label for="username">Usuario</label>
+            </div>
+            <div class="form-floating">
+                <input type="password" class="form-control" id="password" name="password" placeholder="Password">
+                <label for="password" class="form-label">Contraseña</label>
+            </div>
+        
+            <div class="mb-3">
+                <div>
+                    <a class="dropdown-item" href="/signup">¿No tienes cuenta? Regístrate</a>
+                    <a class="dropdown-item" href="/password_recovery">¿Olvidó su contraseña?</a>
+                </div>
+            </div>
+    
+            <button class="w-100 btn btn-lg btn-primary" type="submit" name="enviar" value="Enviar">Sign in</button>
+            <p class="mt-5 mb-3 text-muted">&copy; 2017–2021</p>
+            </form>
+        </main>
+
     </form>
-    <div class="dropdown-divider"></div>
-    
-    
-</div>
 
 {% endblock %}
