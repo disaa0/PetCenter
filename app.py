@@ -150,7 +150,7 @@ def agendar_cita():
                     session['client'] = user
                     return render_template("agendar_cita.html", mascotas=pet_dict[user], days=availible_days_dict, is_fecha_defined=False, is_user_selected=True, usuario = user, mensajes=mensajes)
             else:
-                print(request.form)
+                #print(request.form)
                 if 'button_used' in request.form:
                     user = session['client']
                     if request.form['button_used'] == 'appointment':
@@ -334,9 +334,9 @@ def historial_recetas():
                             prescriptions_dict[user] = {}
                 if code not in prescriptions_dict[user]:
                     prescriptions_dict[user][code] = []
-                print(medicamentos)
+                #print(medicamentos)
                 for medicamento in medicamentos:
-                    print(user,pet_name,code,request.form['c'+medicamento],hoy)
+                    #print(user,pet_name,code,request.form['c'+medicamento],hoy)
                     prescriptions_dict[user][code].append({
                     'prescription_id'   : code,
                     'username'          : user,
@@ -454,7 +454,7 @@ def historial_atencion():
                     atenciones = {}
                 else:
                     atenciones = atencion_dict[user]
-                    print(atenciones)
+                    #print(atenciones)
                     user_dates_dict = {}
                     for id, pets in atencion_dict.items():
                         for pet, dates in pets.items():
@@ -469,7 +469,7 @@ def historial_atencion():
                 if 'tipo_solicitud' in request.form.keys():
                     if request.form['tipo_solicitud'] == 'agregar_atencion':
                         
-                        print(request.form)
+                        #print(request.form)
                         username = session['client']
                         pet_name = request.form['select_pet'].lower().title()
                         description = request.form['description']
