@@ -558,6 +558,8 @@ def funcion_usuarios():
                         msg = f'Usuario ya existe.'
                         mensajes.append(msg)
                     return render_template("usuarios.html", action='agregar', mensajes=mensajes)
+            if 'submit_mostrar_eliminados' in request.form:
+                return render_template('usuarios.html', usuarios=user_dict, mostrar_eliminados='True', action='mostrar', mensajes=mensajes)
             if 'submit_button_delete' in request.form:
                 user = request.form['submit_button_delete']
                 user_dict[user]['active'] = 'False'

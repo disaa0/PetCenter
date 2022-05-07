@@ -44,10 +44,12 @@
                 </tr>
             </thead>
             <tbody>
+                
                 {% if usuarios is defined %}
                 {% if usuarios != '' %}
                 <form class="row g-3" action="" method="POST">
                     {% for usuario, datos in usuarios.items() %}
+                    {% if (mostrar_eliminados is defined and datos['active'] == 'False') or datos['active'] == 'True' %}
                     <tr>
                         <th scope="row">{{ loop.index }}</th>
                         <td> {{ usuario }} </td>
@@ -56,7 +58,7 @@
                         <td> {{datos["type"]}} </td>
                         <td> {{ datos["active"] }} </td>
                         <td>
-                            {% if datos["active"] == 'True' %}
+                            {% if datos["active"] == 'True'%}
                             <form action="" method="POST">
                             <button type="submit" class="btn btn-link" name="submit_button_delete"
                                 value="{{ usuario }}">Eliminar</button>
@@ -64,12 +66,27 @@
                             {% endif %}
                         </td>
                     </tr>
+                    {% endif %}
                     {% endfor %}
                 </form>
                 {% endif %}
                 {% endif %}
             </tbody>
         </table>
+
+
+        {% if mostrar_eliminados is defined %}
+        <a href="/usuarios">
+            <button type="submit" class="btn btn-link" name="volver"
+            value="True">Volver</button>
+        </a>
+        {% else %}
+        <form action="" method="POST">
+            <button type="submit" class="btn btn-link" name="submit_mostrar_eliminados"
+                value="True">Mostrar eliminados</button>
+        </form>
+        {% endif %}
+
 
         {% if session['client'] is not defined %}
         <form action="" method="POST">
