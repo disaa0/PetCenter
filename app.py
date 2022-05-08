@@ -4,7 +4,7 @@
 
 #Esta vinculado con un calendario de google: https://calendar.google.com/calendar/u/2?cid=cGV0Y2VudGVydmV0ZXJpbmFyaWE1QGdtYWlsLmNvbQ
 #Falto arreglar/agregar: Informe por mes, precios totales no aparecen en el pdf generado, seccion "Olvide mi contraseña".
-
+#pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
 from crypt import methods
 from dataclasses import replace
