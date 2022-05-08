@@ -1,0 +1,250 @@
+{% extends "base.html" %}
+{% block title %}Medicamentos
+{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block body %}
+
+<div class="container-sm">
+
+    {% if action == 'mostrar' %}
+    {% if session['type'] == 'admin' %}
+    {% if 'client' not in session %}
+
+    <form action="" method="POST">
+        <div class="dropdown">
+            <button type="button" onclick="myFunction()" class="dropbtn">Modificar medicamento</button>
+            <div id="myDropdown" class="dropdown-content">
+                <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+                {% for code, data in medicamentos.items() %}
+                {% if data['active'] == 'True'%}
+                <button type="submit" class="btn btn-link" name="select_drug" value='{{code}}'>{{code + ' - ' +
+                    data['name']}}</button>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+    {% endif %}
+    {% endif %}
+    {% endif %}
+
+    {% if action == 'mostrar' %}
+        <table class="table" data-toggle="table" data-search="true">
+            <thead>
+                <tr>
+                    <th scope="col">Codigo</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Descripción</th>
+                    <th scope="col">Presentación</th>
+                    <th scope="col">Cantidad</th>
+                    <th scope="col">Medida</th>
+                    <th scope="col">Precio</th>
+                    <th scope="col">Activo</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% if medicamentos is defined %}
+                {% if medicamentos != '' %}
+                    {% for medicamento, datos in medicamentos.items() %}
+                    {% if (mostrar_eliminados is defined and datos['active'] == 'False') or datos['active'] == 'True' %}
+                    <tr>
+                        <th scope="row"> {{medicamento}} </th>
+                        <td> {{ datos["name"] }} </td>
+                        <td> {{ datos["description"] }} </td>
+                        <td> {{datos["presentation"]}} </td>
+                        <td> {{datos["quantity"]}} </td>
+                        <td> {{ datos["measure"] }} </td>
+                        <td> {{ datos["price"] }} </td>
+                        <td> {{ datos["active"] }} </td>
+                        <td>
+                            {% if datos["active"] == 'True'%}
+                            <form action="" method="POST">
+                            <button type="submit" class="btn btn-link" name="submit_button_delete"
+                                value="{{ medicamento }}">Eliminar</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% endif %}
+            </tbody>
+        </table>
+
+
+        {% if mostrar_eliminados is defined %}
+        <a href="/medicamentos">
+            <button type="submit" class="btn btn-link" name="volver"
+            value="True">Volver</button>
+        </a>
+        {% else %}
+        <form action="" method="POST">
+            <button type="submit" class="btn btn-link" name="submit_mostrar_eliminados"
+                value="True">Mostrar eliminados</button>
+        </form>
+        {% endif %}
+
+
+        {% if session['client'] is not defined %}
+        <form action="" method="POST">
+            <button type="submit" class="btn btn-primary" name="agregar_medicamento_boton">
+                Agregar medicamento
+            </button>
+        </form>
+        {% endif %}
+    {% else %}
+        <div class="container-sm">
+            {% if action == 'agregar' %}
+            <h2>Agregar medicamento</h2>
+            <h5>Crear un medicamento - <a href="/medicamentos">Volver</a></h5>
+            {% endif %}
+            {% if action == 'modificar' %}
+            <h2>Modificar un medicamento</h2>
+            {{'Modificando: ' + session['client'] + ' - '}}
+            <a href="/medicamentos">Cambiar de usuario</a>
+            {% endif %}
+        
+            <form class="row g-3" action="" method="POST" id="medicamento_form">
+                <div class="col-md-4">
+                    <label for="name" class="form-label">
+                        Nombre
+                    </label>
+                    <input type="text" class="form-control" id="name" name="name" value="{% if medicamento is defined %}{{ medicamento['name'] }}{% endif %}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="description" class="form-label">Descripción</label>
+                    <input type="text" class="form-control" id="description" name="description" value="{% if medicamento is defined %}{{ medicamento['description'] }}{% endif %}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="code" class="form-label">Código</label>
+                    <div class="input-group">
+                        {% if action == 'agregar' %}
+                        <span class="input-group-text" id="inputGroupPrepend2">#</span>
+                        <input type="text" class="form-control" id="code" name="code"
+                            aria-describedby="inputGroupPrepend2" required>
+                        {% elif action == 'modificar' %}
+                        <span class="input-group-text" id="inputGroupPrepend2">#</span>
+                        <input type="text" class="form-control" id="code" name="code"
+                            aria-describedby="inputGroupPrepend2" value="{% if medicamento is defined %}{{ medicamento['code'] }}{% endif %}" disabled>
+                        <input type="text" class="form-control" id="code_hidden" name="code_hidden"
+                            value="{% if medicamento is defined %}{{ medicamento['code'] }}{% endif %}" hidden>
+                        {% endif %}
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <label for="presentation" class="form-label">Presentación</label>
+                    <input type="text" class="form-control" id="presentation" name="presentation" value="{% if medicamento is defined %}{{ medicamento['presentation'] }}{% endif %}" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="quantity" class="form-label">Cantidad</label>
+                    <input type="text" class="form-control" id="quantity" name="quantity" value="{% if medicamento is defined %}{{ medicamento['quantity'] }}{% endif %}" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="measure" class="form-label">Medida</label>
+                    <input type="text" class="form-control" id="measure" name="measure" value="{% if medicamento is defined %}{{ medicamento['measure'] }}{% endif %}" required>
+                </div>
+                <div class="col-md-3">
+                    <label for="code" class="form-label">Precio</label>
+                    <div class="input-group">
+                        <span class="input-group-text" id="inputGroupPrepend2">$</span>
+                        {% if action == 'agregar' %}
+                        <input type="text" class="form-control" id="price" name="price"
+                            aria-describedby="inputGroupPrepend2" required>
+                        {% else %}
+                        <input type="text" class="form-control" id="price" name="price"
+                            aria-describedby="inputGroupPrepend2" value="{% if medicamento is defined %}{{ medicamento['price'] }}{% endif %}" required>
+                        {% endif %}
+                    </div>
+                </div> 
+                <div class="col-12">
+                    {% if action == 'agregar' %}
+                    <button class="btn btn-primary" type="submit" name="agregar" id="agregar" disabled>Agregar medicamento</button>
+                    {% elif action == 'modificar' %}
+                    <button class="btn btn-primary" type="submit" name="agregar" id="agregar">Agregar medicamento</button>
+                    {% endif %}
+                </div>
+            </form>
+            {% if mensajes is defined %}
+            {% for mensaje in mensajes %}
+            <div class="container-fluid py-1">
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                        <use xlink:href="#exclamation-triangle-fill" />
+                    </svg>
+                    <div>
+                        {{mensaje}}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    /* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+    function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function filterFunction() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        div = document.getElementById("myDropdown");
+        a = div.getElementsByTagName("button");
+        for (i = 0; i < a.length; i++) {
+            txtValue = a[i].textContent || a[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                a[i].style.display = "";
+            } else {
+                a[i].style.display = "none";
+            }
+        }
+    } 
+</script>
+
+<!-- scripts -->
+<script type="text/javascript">
+    var form = document.getElementById('medicamento_form');
+    var precio_input = document.getElementById('price');
+    var agregar_button = document.getElementById('agregar');
+
+    //alert(is_date_selected.value);
+    constructor();
+
+    function constructor() {
+        form.reset()
+    }
+
+    function numberValidation(n) {
+        var value = Number(n);
+        var is_integer = false;
+        if (Math.floor(value) == value) {
+            is_integer = true;
+        }
+        if (isNaN(n) || !is_integer || n <= 0) {
+            return false;
+        } else {
+            return true;
+        }
+    }
+
+    precio_input.addEventListener("keyup", function () {
+        if (numberValidation(this.value)) {
+            agregar_button.removeAttribute('disabled');
+        }
+        else {
+            agregar_button.setAttribute('disabled', true);
+        }
+    });
+</script>
+
+{% endblock %}

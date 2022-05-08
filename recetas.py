@@ -1,5 +1,5 @@
 import csv
-from otros import graba_diccionario_de_diccionarios_lista, obtiene_llaves_ddl
+from otros import graba_diccionario_de_diccionarios_lista, obtiene_llaves_ddl, graba_diccionario
 
 def update_prescriptions_file(dic:dict, file:str):
     graba_diccionario_de_diccionarios_lista(dic, file)
@@ -23,6 +23,9 @@ def lee_diccionario_recetas(archivo:str)->dict:
         print(f"No se pudo abrir el archivo {archivo}")
     return diccionario
 
+def update_drugs_file(dic:dict, file:str):
+    graba_diccionario(dic, file)
+
 def lee_diccionario_medicinas (archivo:str)->dict:
     diccionario = {}
     #medicinas[id]->{campo:cosa}
@@ -38,5 +41,16 @@ def lee_diccionario_medicinas (archivo:str)->dict:
         print(f"No se pudo abrir el archivo {archivo}")
     return diccionario
 
-diccionario_recetas = lee_diccionario_recetas('db/prescriptions.csv')
-print(diccionario_recetas)
+def crear_lista_medidas(file:str)->list:
+    lista = []
+    try:
+        with open(file,"r",encoding="utf-8") as fh: #fh: file handle
+            csv_reader = csv.DictReader(fh)
+            for renglon in csv_reader:
+                lista.append(renglon['medida'])
+    except IOError:
+        print(f"No se pudo abrir el archivo {file}")
+    return lista
+
+#diccionario_recetas = lee_diccionario_recetas('db/prescriptions.csv')
+#print(diccionario_recetas)

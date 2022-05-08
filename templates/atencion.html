@@ -34,13 +34,14 @@
             <div id="myDropdown" class="dropdown-content">
                 <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
                 {% for user, data in usuarios.items() %}
+                {% if data['active'] == 'True'%}
                 <button type="submit" class="btn btn-link" name="select_user" value="{{user}}">{{user + ' - ' +
                     data['name']}}</button>
+                {% endif %}
                 {% endfor %}
             </div>
         </div>
     </form>
-
     {% else %}
     {{'Usuario: ' + session['client'] + ' - '}}
     <a href="/atencion">Cambiar de usuario</a>
@@ -48,9 +49,9 @@
     {% endif %}
     {% endif %}
 
-    <table class="table" data-toggle="table" data-search="true">
+    <table class="table" data-toggle="table" data-search="true" id="tabla_atencion">
         <thead>
-            <tr>
+            <tr class="noincluir">
                 {% if atenciones_completas is defined %}
                 <th scope="col">Usuario</th>
                 {% else %}
@@ -75,9 +76,9 @@
                 <td> {{ fecha_datos[orden]["pet_name"] }} </td>
                 <td> {{ fecha_datos[orden]["description"] }} </td>
                 <td> {{ fecha_datos[orden]["date"] }} </td>
-                <td> {{ fecha_datos[orden]["sub_total"] }} </td>
-                <td> {{ fecha_datos[orden]["iva"] }} </td>
-                <td> {{ fecha_datos[orden]["total"] }} </td>
+                <td class="sum_subtotal"> {{ fecha_datos[orden]["sub_total"] }} </td>
+                <td class="sum_iva"> {{ fecha_datos[orden]["iva"] }} </td>
+                <td class="sum_total> {{ fecha_datos[orden]["total"] }} </td>
             </tr>
             {% endif %}
             {% endfor %}
@@ -94,13 +95,13 @@
             {% for pet, fecha_datos in pet_datos.items() %}
             {% if orden in fecha_datos %}
             <tr>
-                <td> {{ fecha_datos[orden]["username"] }} </td>
+                <th> {{ fecha_datos[orden]["username"] }} </td>
                 <td> {{ fecha_datos[orden]["pet_name"] }} </td>
                 <td> {{ fecha_datos[orden]["description"] }} </td>
                 <td> {{ fecha_datos[orden]["date"] }} </td>
-                <td> {{ fecha_datos[orden]["sub_total"] }} </td>
-                <td> {{ fecha_datos[orden]["iva"] }} </td>
-                <td> {{ fecha_datos[orden]["total"] }} </td>
+                <td class="sum_subtotal"> {{ fecha_datos[orden]["sub_total"] }} </td>
+                <td class="sum_iva"> {{ fecha_datos[orden]["iva"] }} </td>
+                <td class="sum_total"> {{ fecha_datos[orden]["total"] }} </td>
             </tr>
             {% endif %}
             {% endfor %}
@@ -108,6 +109,12 @@
             {% endif %}
             {% endfor %}
             {% endfor %}
+            <tr class="noincluir">
+                <td colspan="4">Totales</td>
+                <td><span id="sum1">a</span></td>
+                <td><span id="sum2">a</span></td>
+                <td><span id="sum3">a</span></td>
+            </tr>
             {% endif %}
             {% endif %}
         </tbody>
@@ -253,6 +260,30 @@ toggle between hiding and showing the dropdown content */
     var iva_input = document.getElementById('iva');
     var total_input = document.getElementById('total')
     var agregar_button = document.getElementById('submit_button_add');
+    var valor_subtotal = document.getElementById('sum1');
+    var valor_iva = document.getElementById('sum2');
+    var valor_total = document.getElementById('sum3');
+
+    $(document).ready(function(){
+    var $dataRows=$("#tabla_atencion tr:not('.noincluir')");
+    var sum_col_sub = 0;
+    var sum_col_iva = 0;
+    var sum_col_total = 0;
+
+        $dataRows.each(function() {
+            var sum_subtotal = $(this).find('.sum_subtotal'); 
+            sum_col_sub += parseInt(sum_subtotal.html());
+            var sum_iva = $(this).find('.sum_iva'); 
+            sum_col_iva += parseInt(sum_iva.html());
+            var sum_total = $(this).find('.sum_total');
+            sum_col_total += parseInt(sum_total.html());
+        });
+        document.getElementById("sum1").innerHTML = sum_col_sub;
+        document.getElementById("sum2").innerHTML = sum_col_iva;
+        document.getElementById("sum3").innerHTML = sum_col_total;
+        
+
+    });
 
     //alert(is_date_selected.value);
     constructor();

@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block title %}Usuarios
+{% endblock %}
+{% block head %}
+{{ super() }}
+{% endblock %}
+{% block body %}
+
+<div class="container-sm">
+
+    {% if action == 'mostrar' %}
+    {% if session['type'] == 'admin' %}
+    {% if 'client' not in session %}
+
+    <form action="" method="POST">
+        <div class="dropdown">
+            <button type="button" onclick="myFunction()" class="dropbtn">Modificar usuario</button>
+            <div id="myDropdown" class="dropdown-content">
+                <input type="text" placeholder="Search.." id="myInput" onkeyup="filterFunction()">
+                {% for user, data in usuarios.items() %}
+                {% if data['active'] == 'True'%}
+                <button type="submit" class="btn btn-link" name="select_user" value="{{user}}">{{user + ' - ' +
+                    data['name']}}</button>
+                {% endif %}
+                {% endfor %}
+            </div>
+        </div>
+    </form>
+    {% endif %}
+    {% endif %}
+    {% endif %}
+
+    {% if action == 'mostrar' %}
+        <table class="table" data-toggle="table" data-search="true">
+            <thead>
+                <tr>
+                    <th scope="col">#</th>
+                    <th scope="col">Usuario</th>
+                    <th scope="col">Nombre</th>
+                    <th scope="col">Correo</th>
+                    <th scope="col">Tipo</th>
+                    <th scope="col">Activo</th>
+                    <th scope="col"></th>
+                </tr>
+            </thead>
+            <tbody>
+                
+                {% if usuarios is defined %}
+                {% if usuarios != '' %}
+                    {% for usuario, datos in usuarios.items() %}
+                    {% if (mostrar_eliminados is defined and datos['active'] == 'False') or datos['active'] == 'True' %}
+                    <tr>
+                        
+                        <th scope="row">{{ loop.index }}</th>
+                        <td> {{ usuario }} </td>
+                        <td> {{ datos["name"] }} </td>
+                        <td> {{datos["email"]}} </td>
+                        <td> {{datos["type"]}} </td>
+                        <td> {{ datos["active"] }} </td>
+                        <td>
+                        {% if datos["active"] == 'True'%}
+                        <form action="" method="POST">
+                        <button type="submit" class="btn btn-link" name="submit_button_delete"
+                            value="{{ usuario }}">Eliminar</button>
+                        </form>
+                        {% endif %}
+                        </td>
+
+                    </tr>
+                    {% endif %}
+                    {% endfor %}
+                {% endif %}
+                {% endif %}
+            </tbody>
+        </table>
+
+
+        {% if mostrar_eliminados is defined %}
+        <a href="/usuarios">
+            <button type="submit" class="btn btn-link" name="volver"
+            value="True">Volver</button>
+        </a>
+        {% else %}
+        <form action="" method="POST">
+            <button type="submit" class="btn btn-link" name="submit_mostrar_eliminados"
+                value="True">Mostrar eliminados</button>
+        </form>
+        {% endif %}
+
+
+        {% if session['client'] is not defined %}
+        <form action="" method="POST">
+            <button type="submit" class="btn btn-primary" name="agregar_usuario_boton">
+                Agregar usuario
+            </button>
+        </form>
+        {% endif %}
+    {% else %}
+        <div class="container-sm">
+            {% if action == 'agregar' %}
+            <h2>Agregar usuario</h2>
+            <h5>Crear una cuenta - <a href="/usuarios">Volver</a></h5>
+            {% endif %}
+            {% if action == 'modificar' %}
+            <h2>Modificar un usuario</h2>
+            {{'Modificando: ' + session['client'] + ' - '}}
+            <a href="/usuarios">Cambiar de usuario</a>
+            {% endif %}
+        
+            <form class="row g-3" action="" method="POST">
+                <div class="col-md-4">
+                    <label for="name" class="form-label">
+                        Nombre
+                    </label>
+                    <input type="text" class="form-control" id="name" name="name" value="{% if usuario is defined %}{{ usuario['name'] }}{% endif %}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="email" class="form-label">Email</label>
+                    <input type="email" class="form-control" id="email" name="email" value="{% if usuario is defined %}{{ usuario['email'] }}{% endif %}" required>
+                </div>
+                <div class="col-md-4">
+                    <label for="username" class="form-label">Usuario</label>
+                    <div class="input-group">
+                        {% if action == 'agregar' %}
+                        <span class="input-group-text" id="inputGroupPrepend2">@</span>
+                        <input type="text" class="form-control" id="username" name="username"
+                            aria-describedby="inputGroupPrepend2" required>
+                        {% elif action == 'modificar' %}
+                        <span class="input-group-text" id="inputGroupPrepend2">@</span>
+                        <input type="text" class="form-control" id="username" name="username"
+                            aria-describedby="inputGroupPrepend2" value="{% if usuario is defined %}{{ usuario['username'] }}{% endif %}" disabled>
+                        <input type="text" class="form-control" id="username_hidden" name="username_hidden"
+                            value="{% if usuario is defined %}{{ usuario['username'] }}{% endif %}" hidden>
+                        {% endif %}
+                    </div>
+                </div>
+                {% if action == 'agregar' %}
+                <div class="col-md-6">
+                    <label for="password" class="form-label">Contraseña</label>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+                {% endif %}
+                
+                <div class="col-md-12">
+                    <label for="type" class="form-label">Tipo</label>
+                    <select class="form-select" aria-label="Select" id="type" name="type"
+                        required>
+                        {% if action == 'agregar'%}
+                            <option value="" selected>Seleccione</option>
+                        {% elif action == 'modificar' %}
+                            <option value="">Seleccione</option>
+                        {% endif %}
+                        {% if usuario is defined %}
+                            {% if usuario['type'] == 'client'%}
+                                <option value="client" selected> Cliente </option>
+                                <option value="user"> Usuario </option>
+                                <option value="admin"> Administrador </option>
+                            {% elif usuario['type'] == 'user'%}
+                                <option value="client"> Cliente </option>
+                                <option value="user" selected> Usuario </option>
+                                <option value="admin"> Administrador </option>
+                            {% elif usuario['type'] == 'admin'%}
+                            <option value="client"> Cliente </option>
+                            <option value="user"> Usuario </option>
+                            <option value="admin" selected> Administrador </option>
+                            {% endif %}
+                        {% else %}
+                            <option value="client"> Cliente </option>
+                            <option value="user"> Usuario </option>
+                            <option value="admin"> Administrador </option>
+                        {% endif %}
+                    </select>
+                </div>
+                <div class="col-12">
+                    <button class="btn btn-primary" type="submit" name="agregar">Agregar usuario</button>
+                </div>
+            </form>
+            {% if mensajes is defined %}
+            {% for mensaje in mensajes %}
+            <div class="container-fluid py-1">
+                <div class="alert alert-danger d-flex align-items-center" role="alert">
+                    <svg class="bi flex-shrink-0 me-2" width="24" height="24" role="img" aria-label="Danger:">
+                        <use xlink:href="#exclamation-triangle-fill" />
+                    </svg>
+                    <div>
+                        {{mensaje}}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    /* When the user clicks on the button,
+toggle between hiding and showing the dropdown content */
+    function myFunction() {
+        document.getElementById("myDropdown").classList.toggle("show");
+    }
+
+    function filterFunction() {
+        var input, filter, ul, li, a, i;
+        input = document.getElementById("myInput");
+        filter = input.value.toUpperCase();
+        div = document.getElementById("myDropdown");
+        a = div.getElementsByTagName("button");
+        for (i = 0; i < a.length; i++) {
+            txtValue = a[i].textContent || a[i].innerText;
+            if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                a[i].style.display = "";
+            } else {
+                a[i].style.display = "none";
+            }
+        }
+    } 
+</script>
+{% endblock %}

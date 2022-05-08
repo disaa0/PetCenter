@@ -60,9 +60,15 @@
                     aria-label="Agendar cita" id="fecha" name="fecha"">
                 {% endif %}
             </div>
+            {% if mascotas == '' %}
+            <button class=" btn btn-primary" type="button" name="horario" id="horario"
+                    value="solicitar_horario" disabled>Solicitar horario</button>
+            </div>
+            {% else %}
             <button class=" btn btn-primary" type="button" name="horario" id="horario"
                     value="solicitar_horario">Solicitar horario</button>
             </div>
+            {% endif %}
             <div class="col-md-12">
                 <label for="hora" class="form-label">Hora</label>
                 {% if is_fecha_defined %}
@@ -86,7 +92,9 @@
                     disabled="{{ not is_fecha_defined }}">
                     <option value="" selected>Seleccione</option>
                     {% for mascota in mascotas %}
+                    {% if mascota['active'] == 'True'%}
                     <option value="{{ mascota }}">{{ mascota }}</option>
+                    {% endif %}
                     {% endfor %}
                 </select>
             </div>
@@ -96,7 +104,7 @@
                     disabled="{{ not is_fecha_defined }}">
                     <option value="" selected>Seleccione</option>
                     <option value="Boutique">Boutique</option>
-                    <option value="Boutique">Veterinaria</option>
+                    <option value="Veterinaria">Veterinaria</option>
                 </select>
             </div>
             <div class="col-12">
