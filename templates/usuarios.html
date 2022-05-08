@@ -47,10 +47,10 @@
                 
                 {% if usuarios is defined %}
                 {% if usuarios != '' %}
-                <form class="row g-3" action="" method="POST">
                     {% for usuario, datos in usuarios.items() %}
                     {% if (mostrar_eliminados is defined and datos['active'] == 'False') or datos['active'] == 'True' %}
                     <tr>
+                        
                         <th scope="row">{{ loop.index }}</th>
                         <td> {{ usuario }} </td>
                         <td> {{ datos["name"] }} </td>
@@ -58,17 +58,17 @@
                         <td> {{datos["type"]}} </td>
                         <td> {{ datos["active"] }} </td>
                         <td>
-                            {% if datos["active"] == 'True'%}
-                            <form action="" method="POST">
-                            <button type="submit" class="btn btn-link" name="submit_button_delete"
-                                value="{{ usuario }}">Eliminar</button>
-                            </form>
-                            {% endif %}
+                        {% if datos["active"] == 'True'%}
+                        <form action="" method="POST">
+                        <button type="submit" class="btn btn-link" name="submit_button_delete"
+                            value="{{ usuario }}">Eliminar</button>
+                        </form>
+                        {% endif %}
                         </td>
+
                     </tr>
                     {% endif %}
                     {% endfor %}
-                </form>
                 {% endif %}
                 {% endif %}
             </tbody>

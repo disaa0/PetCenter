@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+  {% block head %}
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -28,13 +29,10 @@
   <link href="/static/css/font-awesome.min.css" rel="stylesheet" />
   <link href="/static/css/font-awesome.min.css" rel="stylesheet" />
 
-  {% block head %}
-
   {% endblock %}
 
 </head>
 
-<header>
 
   <div class="hero_area">
 
@@ -83,17 +81,15 @@
           </div>
         </nav>
       </div>
+
+      {% block header %}
+
+      {% endblock %}
     </header>
 
     <!-- end header section -->
 
-    {% block header %}
-
-    {% endblock %}
-
   </div>
-
-</header>
 
 <body>
   <style>
@@ -293,12 +289,7 @@
 
   <!-- footer section -->
 
-  <script src="/static/js/jquery-3.4.1.min.js"></script>
-  <script src="/static/js/bootstrap.js"></script>
-
   <!-- custom js -->
-
-  <script src="/static/js/custom.js"></script>
 
   {% block footer %}
 

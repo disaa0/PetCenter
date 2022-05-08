@@ -1,37 +1,28 @@
 from datetime import date, datetime
 import csv
 
-def graba_diccionario(diccionario:dict,llave_dict:str,archivo:str):
+def graba_diccionario(diccionario:dict,archivo:str):
     with open(archivo,'w') as fh:
 
-        lista_campos = obtiene_llaves(diccionario,llave_dict)
-        #print("lista_campos")
-        #print(lista_campos)
+        lista_campos = obtiene_llaves(diccionario)
+        print(lista_campos)
         dw = csv.DictWriter(fh,lista_campos)
         dw.writeheader()
         rows = []
+        d = {}
         for llave, valor_d in diccionario.items():
-            #print("1")
-            #print(llave, valor_d)
-            d = { 'username':llave}  #aquí va llave_dict
+            d = {}  #aquí va llave_dict
             for key,value in valor_d.items():
-                #print("2")
-                #print(key,value)
                 d[key] = value
             rows.append(d)
         #print(rows)
         dw.writerows(rows) 
 
-def obtiene_llaves(diccionario:dict,llave_dicc:str)->list:
-    lista = [ llave_dicc ]
-    llaves = list(diccionario.keys())
-    
-    k = llaves[0]
-    diccionario_adentro = diccionario[k]
-
-    lista_dentro =  list(diccionario_adentro.keys())
-    lista.extend(lista_dentro)
-    #print(lista)
+def obtiene_llaves(diccionario:dict)->list:
+    lista = []
+    for elemento, valores in diccionario.items():
+        lista = valores.keys()
+        break
     return lista
 
 
@@ -190,11 +181,9 @@ def tiene_mascotas(mascotas:dict, usuario:str)->bool:
                 break
     return ret
 
-def usuario_activo(user:dict, usuarios:str)->bool:
+def usuario_activo(usuarios:dict, user:str)->bool:
     ret = False
     if user in usuarios:
-        for usuario, valores in usuarios[user].items():
-            if valores['active'] == 'True':
-                ret = True
-                break
+        if usuarios[user]['active'] == 'True':
+            ret = True
     return ret

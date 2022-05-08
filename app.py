@@ -17,6 +17,7 @@ pets_file = 'db/pets.csv'
 pets_type_file = 'db/pet_types.csv'
 citas_file = 'db/citas.csv'
 drugs_file = 'db/drugs.csv'
+measures_file = 'db/measures.csv'
 prescriptions_file = 'db/prescriptions.csv'
 atencion_file = 'db/atencion.csv'
 
@@ -27,6 +28,7 @@ pet_dict = usuarios.lee_lista_mascotas(pets_file)
 common_types_list = usuarios.crear_lista_mascotas(pets_type_file)
 citas_dict = citas.lee_diccionario_citas(citas_file)
 drugs_dict = recetas.lee_diccionario_medicinas(drugs_file)
+measures_list = recetas.crear_lista_medidas(measures_file)
 prescriptions_dict = recetas.lee_diccionario_recetas(prescriptions_file)
 atencion_dict = atencion.lee_diccionario_atencion(atencion_file)
 superdiccionario_usuarios = usuarios.crea_diccionario_clientes(user_dict)
@@ -129,15 +131,13 @@ def agendar_cita():
                 session['client'] = user
                 if not tiene_mascotas(pet_dict,user):
                     mascotas = ''
-                    mensajes.append("Usuario "+ user +" sin mascotas activas")
+                    mensajes.append("Usted no tiene mascotas activas")
                 #print(pet_dict[user])                
                 return render_template("agendar_cita.html", mascotas=mascotas, days=availible_days_dict, is_fecha_defined=False, is_user_selected=True, usuario = user, mensajes=mensajes)
-            if type == 'usuario':
-                mascotas = pet_dict
-                return render_template("agendar_cita.html", mascotas=pet_dict, days=availible_days_dict, is_fecha_defined=False, usuarios=user_dict, is_user_selected=False, mensajes=mensajes)
-            if type == 'admin':
-                mascotas = pet_dict
-                return render_template("agendar_cita.html", mascotas=pet_dict, days=availible_days_dict, is_fecha_defined=False, usuarios=user_dict, is_user_selected=False, mensajes=mensajes)
+            else:
+                if type == 'admin':
+                    mascotas = pet_dict
+                    return render_template("agendar_cita.html", mascotas=pet_dict, days=availible_days_dict, is_fecha_defined=False, usuarios=user_dict, is_user_selected=False, mensajes=mensajes)
             
         else:
             return redirect("/login")
@@ -145,7 +145,7 @@ def agendar_cita():
         if request.method == 'POST':
             if 'select_user' in request.form:
                 user = request.form['select_user']
-                session['client'] = user
+                print(tiene_mascotas(pet_dict, user))
                 if not tiene_mascotas(pet_dict,user):
                     mensajes.append("Usuario "+ user +" sin mascotas activas")
                     return render_template("agendar_cita.html", mascotas=pet_dict, days=availible_days_dict, is_fecha_defined=False, usuarios=user_dict, is_user_selected=False, mensajes=mensajes)
@@ -274,7 +274,7 @@ def historial_recetas():
                 user = session['username']
                 session['client'] = user
                 if user not in prescriptions_dict:
-                    mensajes.append('Usuario '+ user +' sin recetas')
+                    mensajes.append('Usted no tiene recetas')
                     return render_template("historial_recetas.html", mensajes=mensajes)
                 else:
                     d = {}
@@ -508,7 +508,7 @@ def funcion_usuarios():
             if type == 'admin':
                 return render_template('usuarios.html', usuarios=user_dict, action='mostrar', mensajes=mensajes)
             else:
-                redirect('/')
+                return redirect('/')
         else:
             return redirect("/login")
     else:
@@ -532,7 +532,6 @@ def funcion_usuarios():
                     user_dict[username]['name'] = name
                     user_dict[username]['type'] = type
                     user_dict[username]['email'] = email
-                    user_dict[username]['active'] = 'True'
                     usuarios.update_users_file(user_dict,users_file)
                     mails = usuarios.crear_lista_emails(user_dict)
                     return redirect("/usuarios")
@@ -565,6 +564,77 @@ def funcion_usuarios():
                 user_dict[user]['active'] = 'False'
                 usuarios.update_users_file(user_dict,users_file)
                 return render_template("usuarios.html", usuarios=user_dict, action='mostrar', mensajes=mensajes)
+
+@app.route("/medicamentos", methods=['GET','POST'])
+def funcion_medicamentos():
+    mensajes = []
+    if request.method == 'GET':
+        if 'logged_in' in session:
+            if 'client' in session:
+                session.pop('client', None)
+            type = session['type']
+            if type == 'admin':
+                return render_template('medicamentos.html', medicamentos=drugs_dict, action='mostrar', mensajes=mensajes)
+            else:
+                return redirect('/')
+        else:
+            return redirect("/login")
+    else:
+        if request.method == 'POST':
+            if 'select_drug' in request.form:
+                drug = request.form['select_drug']
+                session['client'] = drug
+                return render_template("medicamentos.html", medicamento=drugs_dict[drug], action='modificar', mensajes=mensajes)
+            if 'agregar_medicamento_boton' in request.form:
+                return render_template("medicamentos.html", action='agregar', mensajes=mensajes)
+            if 'agregar' in request.form:
+                if 'code' in request.form:
+                    code = request.form['code']
+                    tipo = 'agregar'
+                else:
+                    code = request.form['code_hidden']
+                    tipo = 'modificar'
+                name = request.form['name']
+                description = request.form['description']
+                presentation = request.form['presentation']
+                quantity = request.form['quantity']
+                measure = request.form['measure']
+                price = request.form['price']
+                if tipo == 'modificar' and code in drugs_dict:
+                    drugs_dict[code]['name'] = name
+                    drugs_dict[code]['description'] = description
+                    drugs_dict[code]['presentation'] = presentation
+                    drugs_dict[code]['quantity'] = quantity
+                    drugs_dict[code]['measure'] = measure
+                    drugs_dict[code]['price'] = price
+                    recetas.update_drugs_file(drugs_dict,drugs_file)
+                    return redirect("/medicamentos")
+                elif tipo == 'agregar' and code not in drugs_dict:
+                    drugs_dict[code] = {
+                        'code'          : code,
+                        'name'          : name,
+                        'description'   : description,
+                        'presentation'  : presentation,
+                        'quantity'      : quantity,
+                        'measure'       : measure,
+                        'price'         : price,
+                        'active'        : 'True'
+                    }
+                    recetas.update_drugs_file(drugs_dict,drugs_file)
+                    return redirect("/medicamentos")
+                else:
+                    if code in drugs_dict:
+                        msg = f'Medicamento con ese código ya existe.'
+                        mensajes.append(msg)
+                    return render_template("medicamentos.html", action='agregar', mensajes=mensajes)
+            if 'submit_mostrar_eliminados' in request.form:
+                return render_template('medicamentos.html', medicamentos=drugs_dict, mostrar_eliminados='True', action='mostrar', mensajes=mensajes)
+            if 'submit_button_delete' in request.form:
+                drug = request.form['submit_button_delete']
+                drugs_dict[drug]['active'] = 'False'
+                recetas.update_drugs_file(drugs_dict,drugs_file)
+                return render_template("medicamentos.html", medicamentos=drugs_dict, action='mostrar', mensajes=mensajes)
+
 if __name__ == "__main__":
     app.run(debug=True)
     

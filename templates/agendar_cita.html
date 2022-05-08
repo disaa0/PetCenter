@@ -60,9 +60,15 @@
                     aria-label="Agendar cita" id="fecha" name="fecha"">
                 {% endif %}
             </div>
+            {% if mascotas == '' %}
+            <button class=" btn btn-primary" type="button" name="horario" id="horario"
+                    value="solicitar_horario" disabled>Solicitar horario</button>
+            </div>
+            {% else %}
             <button class=" btn btn-primary" type="button" name="horario" id="horario"
                     value="solicitar_horario">Solicitar horario</button>
             </div>
+            {% endif %}
             <div class="col-md-12">
                 <label for="hora" class="form-label">Hora</label>
                 {% if is_fecha_defined %}
