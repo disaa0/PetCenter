@@ -45,7 +45,11 @@
     {% endif %}
     {% endif %}
 
-
+    {% if 'client' not in session %}
+    {% if session['type'] == 'user' or session['type'] == 'admin' %}
+    <iframe src="https://calendar.google.com/calendar/embed?src=petcenterveterinaria5%40gmail.com&ctz=America%2FHermosillo" style="border: 0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
+    {% endif %}
+    {% else %}
     <form class="row g-3" action="" method="POST">
         <table class="table">
             <thead>
@@ -83,6 +87,8 @@
             </tbody>
         </table>
     </form>
+    {% endif %}
+
 </div>
 <script>
     /* When the user clicks on the button,

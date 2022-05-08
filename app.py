@@ -132,6 +132,8 @@ def agendar_cita():
                 if not tiene_mascotas(pet_dict,user):
                     mascotas = ''
                     mensajes.append("Usted no tiene mascotas activas")
+                else:
+                    mascotas = pet_dict[user]
                 #print(pet_dict[user])                
                 return render_template("agendar_cita.html", mascotas=mascotas, days=availible_days_dict, is_fecha_defined=False, is_user_selected=True, usuario = user, mensajes=mensajes)
             else:
@@ -160,12 +162,13 @@ def agendar_cita():
                         fecha_texto = request.form['date_selected']
                         fecha = datetime.strptime(fecha_texto, '%d/%m/%Y')
                         fecha_formato = fecha.strftime('%Y-%m-%d')
+                        mascotas = pet_dict[user]
                         if fecha_formato not in availible_days_dict:
                             mensajes.append("No puede realizar citas en periodos mayores de un año")
-                            return render_template("agendar_cita.html", mascotas=pet_dict[user], days=availible_days_dict, is_fecha_defined=False, is_user_selected=True, usuario = user, mensajes=mensajes)
+                            return render_template("agendar_cita.html", mascotas=mascotas, days=availible_days_dict, is_fecha_defined=False, is_user_selected=True, usuario = user, mensajes=mensajes)
                         horario = availible_days_dict[fecha_formato]
                         #print(horario[fecha_formato])
-                        return render_template("agendar_cita.html", mascotas=pet_dict[user], days=availible_days_dict, is_fecha_defined=True, fecha=fecha_texto, horario=horario, is_user_selected=True, usuario = user)
+                        return render_template("agendar_cita.html", mascotas=mascotas, days=availible_days_dict, is_fecha_defined=True, fecha=fecha_texto, horario=horario, is_user_selected=True, usuario = user)
                 if 'agendar' in request.form:
                     tiempo = request.form['hora']
                     ini = datetime.strptime(tiempo, '%Y-%m-%d %H:%M:%S')
@@ -548,6 +551,7 @@ def funcion_usuarios():
                 elif email not in mails:
                     password = request.form['password']
                     password_hashed = sha256.encrypt(password)
+                    print(type)
                     user_dict[username] = {
                         'username' : username,
                         'name' : name,
