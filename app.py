@@ -448,6 +448,7 @@ def historial_atencion():
                 user = request.form['select_user']
                 session['client'] = user
                 if not tiene_mascotas(pet_dict,user):
+                    mensajes.append('Usuario ' + user + ' no tiene mascotas registradas')
                     mascotas = {}
                 else:
                     mascotas = pet_dict[user]
@@ -468,10 +469,9 @@ def historial_atencion():
                     fechas_atenciones = user_dates_dict[user]
                 return render_template("atencion.html", atenciones = atenciones, sorted_dates = sorted(fechas_atenciones,reverse=True), hoy = datetime.now().strftime('%Y-%m-%d %H:%M:%S'), mascotas=mascotas, mensajes=mensajes)
             else:
-                user = session['client']
                 if 'tipo_solicitud' in request.form.keys():
                     if request.form['tipo_solicitud'] == 'agregar_atencion':
-                        
+                        user = session['client']
                         #print(request.form)
                         username = session['client']
                         pet_name = request.form['select_pet'].lower().title()
@@ -495,7 +495,17 @@ def historial_atencion():
                         }
                         atencion.update_atencion_file(atencion_dict,atencion_file)
                         return redirect('/atencion')
-
+                    if request.form['tipo_solicitud'] == 'informe_dia':
+                        date_selected = request.form['date_selected']
+                        atenciones = [] 
+                        for usuario, datos_usuario in atencion_dict.items():
+                            for pet, datos_pet in datos_usuario.items():
+                                for code, datos in datos_pet.items():
+                                    if datos['date'] == date_selected:
+                                        atenciones.append(datos)
+                        if atenciones == []:
+                            mensajes.append('Día sin ventas')
+                        return render_template("atencion.html", usuarios=user_dict, atenciones_informe=atenciones, mensajes=mensajes)
 
 @app.route("/usuarios", methods=['GET','POST'])
 def funcion_usuarios():

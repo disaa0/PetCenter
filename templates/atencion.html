@@ -42,6 +42,7 @@
             </div>
         </div>
     </form>
+
     {% else %}
     {{'Usuario: ' + session['client'] + ' - '}}
     <a href="/atencion">Cambiar de usuario</a>
@@ -52,7 +53,7 @@
     <table class="table" data-toggle="table" data-search="true" id="tabla_atencion">
         <thead>
             <tr class="noincluir">
-                {% if atenciones_completas is defined %}
+                {% if atenciones_completas is defined or atenciones_informe is defined%}
                 <th scope="col">Usuario</th>
                 {% else %}
                 <th scope="col">#</th>
@@ -78,7 +79,7 @@
                 <td> {{ fecha_datos[orden]["date"] }} </td>
                 <td class="sum_subtotal"> {{ fecha_datos[orden]["sub_total"] }} </td>
                 <td class="sum_iva"> {{ fecha_datos[orden]["iva"] }} </td>
-                <td class="sum_total> {{ fecha_datos[orden]["total"] }} </td>
+                <td class="sum_total"> {{ fecha_datos[orden]["total"] }} </td>
             </tr>
             {% endif %}
             {% endfor %}
@@ -109,29 +110,53 @@
             {% endif %}
             {% endfor %}
             {% endfor %}
+            {% endif %}
+            {% endif %}
+
+            {% if atenciones_informe is defined %}
+            {% if atenciones_informe != '' %}
+            {% for atencion in atenciones_informe %}
+            <tr>
+                <th> {{ atencion["username"] }} </td>
+                <td> {{ atencion["pet_name"] }} </td>
+                <td> {{ atencion["description"] }} </td>
+                <td> {{ atencion["date"] }} </td>
+                <td class="sum_subtotal"> {{ atencion["sub_total"] }} </td>
+                <td class="sum_iva"> {{ atencion["iva"] }} </td>
+                <td class="sum_total"> {{ atencion["total"] }} </td>
+            </tr>
+            {% endfor %}
+            {% endif %}
+            {% endif %}
+
             <tr class="noincluir">
-                <td colspan="4">Totales</td>
+                <td colspan="4"></td>
                 <td><span id="sum1">a</span></td>
                 <td><span id="sum2">a</span></td>
                 <td><span id="sum3">a</span></td>
             </tr>
-            {% endif %}
-            {% endif %}
+
         </tbody>
     </table>
     {% if session['type'] == 'usuario' or session['type'] == 'admin' %}
     {% if 'client' in session %}
     <!-- Button trigger modal -->
+    {% if mascotas|length %}
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
         Agregar atención
     </button>
+    {% else %}
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" disabled>
+        Agregar atención
+    </button>
+    {% endif %}
 
     <!-- Modal -->
     <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
         aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form action="" method="POST" id="atencion_form">
+                <form action="" method="POST" id="form" name="atencion">
                     <div class="modal-header">
                         <h5 class="modal-title" id="staticBackdropLabel">Agregar atención</h5>
                         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
@@ -183,7 +208,7 @@
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                         <button type="button" class="btn btn-primary" name="submit_button_add"
-                            id="submit_button_add">Crear</button>
+                            id="submit_button_add" value="agregar">Crear</button>
                     </div>
                 </form>
             </div>
@@ -191,6 +216,53 @@
     </div>
     {% endif %}
     {% endif %}
+    <!-- Informe por dia -->
+    {% if session['type'] == 'admin' %}
+    {% if 'client' not in session %}
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        Informe por día
+    </button>
+
+    <!-- Modal -->
+    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1"
+        aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form action="" method="POST" id="form" name="dia_form">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="staticBackdropLabel"> Informe por día </h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="row g-3">
+                            <div class="input-group mb-4">
+                                <i class="bi bi-calendar-date input-group-text"></i>
+                                <input type=" text" class="datepicker_input form-control"
+                                    placeholder="Seleccione un día" required aria-label="Selecicionar fecha" id="fecha2"
+                                    name="fecha2">
+                            </div>
+                            
+                            <input type="hidden" id="date_selected" name="date_selected" value="" required>
+                            <input type="hidden" id="tipo_solicitud" name="tipo_solicitud" value="informe_dia"
+                                required>
+
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                        <button type="button" class="btn btn-primary" name="submit_button_add"
+                            id="submit_button_add" value="informe_dia">Consultar</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+
+
 </div>
 
 <!-- Bootstrap 5 JavaScript Bundle with Popper -->
@@ -251,14 +323,29 @@ toggle between hiding and showing the dropdown content */
 
 <!-- scripts -->
 <script type="text/javascript">
-    var form = document.getElementById('atencion_form');
-    var fecha_input = document.getElementById('fecha');
-    var pet_input = document.getElementById('select_pet');
-    var description_input = document.getElementById('description');
-    var date_selected = document.getElementById('date_selected');
-    var sub_total_input = document.getElementById('sub_total');
-    var iva_input = document.getElementById('iva');
-    var total_input = document.getElementById('total')
+    var form = document.getElementById('form');
+    //alert(form.name)
+    if (form.name == 'atencion'){
+        var fecha_input = document.getElementById('fecha');
+        var pet_input = document.getElementById('select_pet');
+        var description_input = document.getElementById('description');
+        var date_selected = document.getElementById('date_selected');
+        var sub_total_input = document.getElementById('sub_total');
+        var iva_input = document.getElementById('iva');
+        var total_input = document.getElementById('total')
+        sub_total_input.addEventListener("keyup", function () {
+        if (numberValidation()) {
+            iva_input.value = sub_total_input.value * 0.16;
+            total_input.value = sub_total_input.value * 1.16;
+        }
+    });
+    }
+    if (form.name == 'dia_form'){
+        var fecha_input = document.getElementById('fecha2');
+        var date_selected = document.getElementById('date_selected');
+    }
+    
+    
     var agregar_button = document.getElementById('submit_button_add');
     var valor_subtotal = document.getElementById('sum1');
     var valor_iva = document.getElementById('sum2');
@@ -272,11 +359,11 @@ toggle between hiding and showing the dropdown content */
 
         $dataRows.each(function() {
             var sum_subtotal = $(this).find('.sum_subtotal'); 
-            sum_col_sub += parseInt(sum_subtotal.html());
+            sum_col_sub += parseFloat(sum_subtotal.html());
             var sum_iva = $(this).find('.sum_iva'); 
-            sum_col_iva += parseInt(sum_iva.html());
+            sum_col_iva += parseFloat(sum_iva.html());
             var sum_total = $(this).find('.sum_total');
-            sum_col_total += parseInt(sum_total.html());
+            sum_col_total += parseFloat(sum_total.html());
         });
         document.getElementById("sum1").innerHTML = sum_col_sub;
         document.getElementById("sum2").innerHTML = sum_col_iva;
@@ -292,6 +379,9 @@ toggle between hiding and showing the dropdown content */
         form.reset()
     }
 
+    //informes
+
+
     function numberValidation() {
         var n = sub_total_input.value;
         if (isNaN(n)) {
@@ -306,14 +396,7 @@ toggle between hiding and showing the dropdown content */
             return true;
         }
     }
-
-    sub_total_input.addEventListener("change", function () {
-        if (numberValidation()) {
-            iva_input.value = sub_total_input.value * 0.16;
-            total_input.value = sub_total_input.value * 1.16;
-        }
-    });
-
+    
     agregar_button.addEventListener("click", function () {
         ban = false
         try {
@@ -339,11 +422,18 @@ toggle between hiding and showing the dropdown content */
             }
         }
         if (!ban) {
-            iva_input.removeAttribute('disabled');
-            total_input.removeAttribute('disabled');
+            if (form.name == 'atencion'){
+                iva_input.removeAttribute('disabled');
+                total_input.removeAttribute('disabled');
+            }
+            if (form.name == 'dia_form'){
+                
+            }
             form.submit();
         }
     });
+
+    
 </script>
 
 <style>
