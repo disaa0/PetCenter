@@ -22,3 +22,4 @@ def lee_diccionario_atencion(archivo:str)->dict:
     except IOError:
         print(f"No se pudo abrir el archivo {archivo}")
     return diccionario
+

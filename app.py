@@ -1,4 +1,12 @@
-#from crypt import methods
+#INTEGRANTES
+#Contreras Rivera Santiago
+#Machado Encinas German
+
+#Esta vinculado con un calendario de google: https://calendar.google.com/calendar/u/2?cid=cGV0Y2VudGVydmV0ZXJpbmFyaWE1QGdtYWlsLmNvbQ
+#Falto arreglar/agregar: Informe por mes, precios totales no aparecen en el pdf generado, seccion "Olvide mi contraseña".
+
+
+from crypt import methods
 from dataclasses import replace
 from passlib.hash import sha256_crypt as sha256
 import pstats
@@ -6,7 +14,8 @@ import login,usuarios,citas,recetas,atencion
 from otros import tiene_mascotas, usuario_activo
 import os, random
 from datetime import datetime, timedelta
-from flask import Flask, redirect, render_template, request, session, jsonify
+from flask import Flask, redirect, render_template, request, session, jsonify, url_for
+from flask_weasyprint import HTML, render_pdf
 from calendario import delete_event, get_available_days_dict, create_event, search_event
 
 
@@ -508,7 +517,11 @@ def historial_atencion():
                                         atenciones.append(datos)
                         if atenciones == []:
                             mensajes.append('Día sin ventas')
-                        return render_template("atencion.html", usuarios=user_dict, atenciones_informe=atenciones, mensajes=mensajes)
+                        if 'pdf_check' in request.form:
+                            html = render_template("atencion.html", usuarios=user_dict, atenciones_informe=atenciones, mensajes=mensajes)
+                            return render_pdf(HTML(string=html))
+                        else:
+                            return render_template("atencion.html", usuarios=user_dict, atenciones_informe=atenciones, mensajes=mensajes)
 
 @app.route("/usuarios", methods=['GET','POST'])
 def funcion_usuarios():
@@ -648,6 +661,7 @@ def funcion_medicamentos():
                 drugs_dict[drug]['active'] = 'False'
                 recetas.update_drugs_file(drugs_dict,drugs_file)
                 return render_template("medicamentos.html", medicamentos=drugs_dict, action='mostrar', mensajes=mensajes)
+
 
 if __name__ == "__main__":
     app.run(debug=True)

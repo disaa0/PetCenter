@@ -1,8 +1,8 @@
 username,name,type,email,password,active
 pepe,Pepe Completo,client,pepe@gmail.com,$5$rounds=535000$3Fg4qcoYkyhIKPts$ae/ERq52JnLWFnf9dML.OjxcpYZiVxtrSF4mdaQ/c/D,True
-disaa,Santiago Con,admin,disaan@outlook.com,$5$rounds=535000$4Xan0vMMjD2gZH8T$McpJ/ArffmxGIr2Ff7uw4J0A12o9Uspa8wfRfaDc147,True
+disaa,Santiago Contreras,admin,disaan@outlook.com,$5$rounds=535000$4Xan0vMMjD2gZH8T$McpJ/ArffmxGIr2Ff7uw4J0A12o9Uspa8wfRfaDc147,True
 macsmacen,German Machado,admin,macsmacen@gmail.com,$5$rounds=535000$4Xan0vMMjD2gZH8T$McpJ/ArffmxGIr2Ff7uw4J0A12o9Uspa8wfRfaDc147,True
-jau,jau,user,jau@jau.com,$5$rounds=535000$8HxrlArwIL3bVkEB$sISDokca8H8Hq6PjBG2RcGRkNc1PUoD3VZCqC.O.i40,False
-juan2,juan,client,juan@juan.com,$5$rounds=535000$Fz5F1iWPXH6jhqq4$bFW4zS1XTOZe50LekDaEP/kKhm6HJDzaHLJQIHnoTD5,True
-elcanicas,Joaquin,client,elcanicas@gmail.com,$5$rounds=535000$9E4FfgQWp0a15VT7$QL3s4legEd1L4zQg1YzdNGNJ42VYE4rieC//cteMkR2,True
-tester,tester,user,test@test.com,$5$rounds=535000$sc39U7jDIIm52Les$t2CoN5YYH0BGSpeSispCutT.4xasNS83ZveoKWSzJi2,True
+jau,Javier Perez,user,jau@jau.com,$5$rounds=535000$8HxrlArwIL3bVkEB$sISDokca8H8Hq6PjBG2RcGRkNc1PUoD3VZCqC.O.i40,False
+juan2,Juan Martinez,client,juan@juan.com,$5$rounds=535000$Fz5F1iWPXH6jhqq4$bFW4zS1XTOZe50LekDaEP/kKhm6HJDzaHLJQIHnoTD5,True
+elcanicas,Joaquin Reyes,client,elcanicas@gmail.com,$5$rounds=535000$9E4FfgQWp0a15VT7$QL3s4legEd1L4zQg1YzdNGNJ42VYE4rieC//cteMkR2,True
+tester,tester tester tester,user,test@test.com,$5$rounds=535000$sc39U7jDIIm52Les$t2CoN5YYH0BGSpeSispCutT.4xasNS83ZveoKWSzJi2,True
