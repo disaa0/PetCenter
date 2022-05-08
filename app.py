@@ -137,7 +137,7 @@ def agendar_cita():
                 #print(pet_dict[user])                
                 return render_template("agendar_cita.html", mascotas=mascotas, days=availible_days_dict, is_fecha_defined=False, is_user_selected=True, usuario = user, mensajes=mensajes)
             else:
-                if type == 'admin':
+                if type == 'admin' or type == 'user':
                     mascotas = pet_dict
                     return render_template("agendar_cita.html", mascotas=pet_dict, days=availible_days_dict, is_fecha_defined=False, usuarios=user_dict, is_user_selected=False, mensajes=mensajes)
             

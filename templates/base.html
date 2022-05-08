@@ -69,6 +69,23 @@
                   <a class="nav-link" href="/atencion">Atención</a>
                 </li>
               </li>
+              {% if session['type'] == 'user' or session['type'] == 'admin'%}
+              <li class="nav-item">
+                <a class="nav-link" href="/recetas">Recetas</a>
+              </li>
+              {% if session['type'] == 'admin'%}
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="/citas" id="citasDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                  Admin
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="citasDropdown">
+                  <li><a class="dropdown-item" href="/usuarios">Usuarios</a></li>
+                  <li><a class="dropdown-item" href="/medicamentos">Medicamentos</a></li>
+                  <li><a class="dropdown-item" href="/atencion">Informes</a></li>
+                </ul>
+              </li>
+              {% endif %}
+              {% endif %}
             </ul>
               {% endif %}
               

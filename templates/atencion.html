@@ -217,7 +217,7 @@
     {% endif %}
     {% endif %}
     <!-- Informe por dia -->
-    {% if session['type'] == 'admin' %}
+    {% if session['type'] == 'admin' or session['type'] == 'user'%}
     {% if 'client' not in session %}
     <!-- Button trigger modal -->
     <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
