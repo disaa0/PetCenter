@@ -6,8 +6,6 @@
 #Falto arreglar/agregar: Informe por mes, precios totales no aparecen en el pdf generado, seccion "Olvide mi contraseña".
 #pip install --upgrade google-api-python-client google-auth-httplib2 google-auth-oauthlib
 
-from crypt import methods
-from dataclasses import replace
 from passlib.hash import sha256_crypt as sha256
 import pstats
 import login,usuarios,citas,recetas,atencion
