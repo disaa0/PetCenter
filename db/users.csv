@@ -1,4 +1,5 @@
-username,username,name,type,email,password
-pepe,pepe,Pepe Completo,client,pepe@gmail.com,$5$rounds=535000$3Fg4qcoYkyhIKPts$ae/ERq52JnLWFnf9dML.OjxcpYZiVxtrSF4mdaQ/c/D
-disaa,disaa,Santiago Con,admin,disaan@outlook.com,$5$rounds=535000$4Xan0vMMjD2gZH8T$McpJ/ArffmxGIr2Ff7uw4J0A12o9Uspa8wfRfaDc147
-macsmacen,macsmacen,German Machado,admin,macsmacen@gmail.com,$5$rounds=535000$4Xan0vMMjD2gZH8T$McpJ/ArffmxGIr2Ff7uw4J0A12o9Uspa8wfRfaDc147
+username,username,name,type,email,password
+pepe,pepe,Pepe Completo,client,pepe@gmail.com,$5$rounds=535000$3Fg4qcoYkyhIKPts$ae/ERq52JnLWFnf9dML.OjxcpYZiVxtrSF4mdaQ/c/D
+disaa,disaa,Santiago Con,admin,disaan@outlook.com,$5$rounds=535000$4Xan0vMMjD2gZH8T$McpJ/ArffmxGIr2Ff7uw4J0A12o9Uspa8wfRfaDc147
+macsmacen,macsmacen,German Machado,admin,macsmacen@gmail.com,$5$rounds=535000$4Xan0vMMjD2gZH8T$McpJ/ArffmxGIr2Ff7uw4J0A12o9Uspa8wfRfaDc147
+pepeneitor,pepeneitor,pepe,client,pepe@yopmail.com,$5$rounds=535000$beaYoV/Ub935/vNF$dPzRcb/J/I4r9MIH2XC2smVyYalxNTeg95/3BVWKQDB
