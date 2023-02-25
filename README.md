@@ -12,9 +12,9 @@ This is a web-based veterinary management software built using Python and Flask.
 ## Installation
 
 1. Clone the repository using `git clone https://github.com/disaa0/PetCenter.git`
-2. Install the required dependencies using `pip install -r requirements.txt`
-3. Create a virtual environment using `python -m venv venv`
-4. Activate the virtual environment using `source venv/bin/activate`
+2. Create a virtual environment using `python -m venv venv`
+3. Activate the virtual environment using `source venv/bin/activate`
+4. Install the required dependencies using `pip install -r requirements.txt`
 5. Create a `.env` file and set the necessary environment variables (see `.env.example` for an example)
 6. Run the application using `flask run`
 
