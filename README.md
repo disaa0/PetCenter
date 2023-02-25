@@ -36,7 +36,7 @@ Contributions are welcome! If you would like to contribute to the project, pleas
 
 ## Credits
 
-This project was developed by San(https://github.com/disaa0) and German Machado (https://github.com/macsmacen).
+This project was developed by San (https://github.com/disaa0) and German Machado (https://github.com/macsmacen).
 
 ## License
 
