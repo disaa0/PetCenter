@@ -1,41 +1,43 @@
 # PetCenter Veterinary Management Software
 
 This is a web-based veterinary management software built using Python and Flask. It allows veterinary clinics to manage their appointments, clients, and pets.
-Features
 
-    Secure authentication system for staff members
-    Appointment scheduling and management
-    Client and pet management
-    Dashboard for an overview of clinic activity
+## Features
 
-Installation
+* Secure authentication system for staff members
+* Appointment scheduling and management
+* Client and pet management
+* Dashboard for an overview of clinic activity
 
-    Clone the repository using git clone https://github.com/disaa0/PetCenter.git
-    Install the required dependencies using pip install -r requirements.txt
-    Create a virtual environment using python -m venv venv
-    Activate the virtual environment using source venv/bin/activate
-    Create a .env file and set the necessary environment variables (see .env.example for an example)
-    Run the application using flask run
+## Installation
 
-Usage
+1. Clone the repository using `git clone https://github.com/your-username/PetCenter.git`
+2. Install the required dependencies using `pip install -r requirements.txt`
+3. Create a virtual environment using `python -m venv venv`
+4. Activate the virtual environment using `source venv/bin/activate`
+5. Create a `.env` file and set the necessary environment variables (see `.env.example` for an example)
+6. Run the application using `flask run`
 
-    Navigate to the application's URL in a web browser (e.g. http://localhost:5000)
-    Log in using your staff credentials
-    Use the dashboard to view clinic activity and manage appointments, clients, and pets
+## Usage
 
-Contributing
+1. Navigate to the application's URL in a web browser (e.g. `http://localhost:5000`)
+2. Log in using your staff credentials
+3. Use the dashboard to view clinic activity and manage appointments, clients, and pets
+
+## Contributing
 
 Contributions are welcome! If you would like to contribute to the project, please follow these steps:
 
-    Fork the repository
-    Create a new branch for your feature using git checkout -b feature/your-feature-name
-    Make your changes and commit them with descriptive commit messages
-    Push your changes to your forked repository
-    Create a pull request against the main repository
+1. Fork the repository
+2. Create a new branch for your feature using `git checkout -b feature/your-feature-name`
+3. Make your changes and commit them with descriptive commit messages
+4. Push your changes to your forked repository
+5. Create a pull request against the main repository
 
-Credits
+## Credits
 
-This project was developed by Your Name.
-License
+This project was developed by San(https://github.com/disaa0) and German Machado (https://github.com/macsmacen).
 
-This project is licensed under the MIT License. See the LICENSE file for more information.
+## License
+
+This project is licensed under the MIT License. See the `LICENSE` file for more information.
