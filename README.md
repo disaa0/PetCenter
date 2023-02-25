@@ -15,8 +15,7 @@ This is a web-based veterinary management software built using Python and Flask.
 2. Create a virtual environment using `python -m venv venv`
 3. Activate the virtual environment using `source venv/bin/activate`
 4. Install the required dependencies using `pip install -r requirements.txt`
-5. Create a `.env` file and set the necessary environment variables (see `.env.example` for an example)
-6. Run the application using `flask run`
+5. Run the application using `flask run`
 
 ## Usage
 
